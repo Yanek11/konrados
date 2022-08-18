@@ -1,6 +1,6 @@
 
 git add .
-git commit -m 'file4'
+git commit -m 'file6'
 git push -u origin main
 
 # pulling a newer version
