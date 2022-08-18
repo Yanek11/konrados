@@ -7,5 +7,5 @@ git remote add origin https://github.com/Yanek11/konrados.git
 git push -u origin main
 # change laptop
 git add .
-git commit
-git push
+git commit -m " Yet another"
+git push 
