@@ -1,5 +1,3 @@
-
-
 ##### FUNDAMENTALS #####
 
 dir | Sort-Object -descending -Property LastWriteTime
