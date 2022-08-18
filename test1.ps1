@@ -1,4 +1,5 @@
 
+git init
 git add .
-git commit -m ' 1 commit from VM'
+git commit -m 'Initial Commit'
 git push -u origin master
