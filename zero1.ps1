@@ -1,0 +1,1 @@
+(Get-Content zeros.txt) | %{ $_ -replace '0', '00'} | Set-Content zeros.txt
