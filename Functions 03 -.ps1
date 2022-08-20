@@ -28,7 +28,8 @@ process{
                 'OS Build'=$os.BuildNumber
                 'FreeSpace'=$disk.FreeSpace / 1GB -as [int]
                     }
-            Write-Output $Prop
+                    $obj=New-Object -TypeName pscustomobject -Property $Prop 
+                    Write-Output $obj
 
     }
 }
