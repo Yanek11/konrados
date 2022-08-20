@@ -38,7 +38,7 @@ process{
                     $obj=New-Object -TypeName pscustomobject -Property $Prop 
                     Write-Output $obj
 
-    }
+    } 
 }
 End{}
 
