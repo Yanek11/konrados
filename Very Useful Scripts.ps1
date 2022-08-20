@@ -1,3 +1,6 @@
+# finding CLASS NAME for get-CimInstance
+Get-CimClass -Namespace root/CIMV2 | where CimClassName -like win32*system*
+
 # Enabling NAT via HyperV
 New-NetIPAddress -IPAddress 1.1.1.254 -PrefixLength 24 -InterfaceIndex 53
 New-NetNat -Name NATNetwork -InternalIPInterfaceAddressPrefix 1.1.1.0/24
