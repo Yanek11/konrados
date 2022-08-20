@@ -1,3 +1,10 @@
+# RESULT
+# Computername OS Name                                             OS Build FreeSpace
+#------------ -------                                             -------- ---------
+#srv01        Microsoft Windows Server 2019 Datacenter Evaluation 17763           25
+#srv02        Microsoft Windows Server 2019 Datacenter Evaluation 17763           28
+#srv03        Microsoft Windows Server 2019 Datacenter Evaluation 17763           28
+
 function get-compinfo1 {
 [CmdletBinding()]
 param(
