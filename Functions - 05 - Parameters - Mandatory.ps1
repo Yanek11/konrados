@@ -2,8 +2,8 @@ function get-compinfo1 {
 [CmdletBinding()]
 param(
         # support for multiple computers
-        [Parameter(Mandatory=$True)]
-        [String[]]$ComputerName , 
+        [Parameter(Mandatory=$true)]
+        [String]$ComputerName , 
         # switch - turn on Error Logging
         [Switch]$Errorlog,
         [String]$LogFile='C:\temp\errorlog.txt'
