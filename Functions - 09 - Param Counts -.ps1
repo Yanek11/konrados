@@ -9,6 +9,7 @@ param(
         ValueFromPipelineByPropertyName=$true,
         HelpMessage='One or more computer names')]
         [Alias('Hostname')] # alias to be used instead of $Computername
+        [Validateset('srv01','srv02','srv03')]
         [String[]]$ComputerName,
         # switch - turn on Error Logging
         [Switch]$Errorlog,
