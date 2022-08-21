@@ -3,11 +3,21 @@
 this is synopsis
 #>
 $ErrorActionPreference
-$ComputerName='srv01','srv02','vdc01'
+$ComputerName='srv01','srv02','vdc01','dsds','sdsad'
+
+# example 1
 Get-CimInstance -ClassName Win32_BIOS -ComputerName $ComputerName -ErrorVariable e
+
+# example 2 - get-process does not support -ComputerName parameter so using get-CimInstance
+get-ciminstance -ClassName Win32_Process -ComputerName $ComputerName -ErrorVariable e
 $MyError
 
 $e.TargetObject # shows which objects are failing which is helpful if lots of objects are involved
+
+# working on error objects "TargetObject" and "OriginInfo" 
+foreach ($t in $e.TargetObject) {$t}
+foreach ($t in $e.OriginInfo) {$t.pscomputername} # hostname
+foreach ($t in $e) {$t.origininfo.pscomputername,$t.TargetObject} # shows hostname and process failing
 
 #1
 # Running variable "$e" containing error message gives standard  error 

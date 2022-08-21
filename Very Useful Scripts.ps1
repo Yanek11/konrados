@@ -24,3 +24,18 @@ invoke-command -ComputerName (Get-Content servers.txt) {}
 #2 - serial execition. if one of executions takes along time, the whole thing stops
 foreach ($s in (get-content servers.txt)) {Invoke-Command -ComputerName $s {}}
 
+# showing variables
+dir variable:
+dir Variable:\? 
+dir Variable:\ErrorView
+dir Variable:*error*
+<# result
+Name                           Value
+----                           -----
+Error                          {Cannot find path 'ErrorView\parameter' because it does not exist., Cannot call method. The provider does not support the use…
+ErrorActionPreference          Continue
+ErrorView                      ConciseView
+Errorlog                       False
+MyError                        {HRESULT 0x80070035,Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand}
+#>
+dir Variable:\IsWindows
