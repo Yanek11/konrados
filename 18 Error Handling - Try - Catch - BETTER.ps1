@@ -28,7 +28,13 @@
                                 Write-Output $Obj
                             }
                             Catch {
+                                # simple message
                                 Write-Warning " you made a mistake with $computer"
+                                
+                                # logging errors to event logs and a txt file
+                                #1 to eventviewer with an error pulled off $currenterror variable
+                                Write-EventLog -LogName Application -Source MyApp -EntryType Error -Message "$currenterror" -EventId 2
+                                #2 logging to a file. works if -ErrorLog parameter was specified
                                 if ($Errorlog) {
                                     get-date | Out-File $LogFile -Force
                                     $Computer | Out-File $LogFile -Append
