@@ -10,8 +10,8 @@ function t {
     Param(
         [Parameter(Mandatory,ValueFromPipelineByPropertyName=$true,position=0)]
     [ValidateScript({$_ -ge (Get-Date)})]
-        [DateTime]
-        $EventDate
+        [DateTime] 
+        $EventDate1 # parameter that is checked
     )
 begin {}
 process {}
