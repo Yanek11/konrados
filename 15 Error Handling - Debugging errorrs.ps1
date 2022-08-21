@@ -7,6 +7,8 @@ $ComputerName='srv01','srv02','vdc01'
 Get-CimInstance -ClassName Win32_BIOS -ComputerName $ComputerName -ErrorVariable e
 $MyError
 
+$e.TargetObject # shows which objects are failing which is helpful if lots of objects are involved
+
 #1
 # Running variable "$e" containing error message gives standard  error 
 $e
