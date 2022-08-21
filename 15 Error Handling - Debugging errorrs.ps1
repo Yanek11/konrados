@@ -4,8 +4,6 @@ this is synopsis
 #>
 $ErrorActionPreference
 $ComputerName='srv01','srv02','vdc01'
-
-
 Get-CimInstance -ClassName Win32_BIOS -ComputerName $ComputerName -ErrorVariable e
 $MyError
 
