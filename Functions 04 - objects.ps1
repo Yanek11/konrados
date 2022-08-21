@@ -1,6 +1,13 @@
+<#
+.SYNOPSIS
+this is the best help I can get
+.DESCRIPTION
+asdfsdfsddfsfsd
+#>
 function get-compinfo1 {
 [CmdletBinding()]
 param(
+    [Alias('host','hostname','ipadress')]
     [String[]]$ComputerName , # [String[]] indicates multiple arguments/computers
     [Switch]$Errorlog,
     [String]$logfile='C:\temp\errorlog.txt'

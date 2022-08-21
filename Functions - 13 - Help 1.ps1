@@ -2,7 +2,7 @@
 
 
 function ipcheck {
-    [CmdletBinding()]
+    [CmdletBinding()] 
     param(
         
         [Parameter(Mandatory=$true,
