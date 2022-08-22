@@ -1,6 +1,6 @@
 <#
 using SupportsShouldProcess, adds -WhatIf and -Confirm parameters
-users can confirm their choice before executing
+users can confirm their choice before executing. USER ARE RESPONSIBLE
 #>
 function Set-Stuff {
         [CmdletBinding(SupportsShouldProcess=$true,
