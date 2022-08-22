@@ -1,22 +1,24 @@
 <#
-logging errors to Event viewer logs
+using SupportsShouldProcess, adds -WhatIf and -Confirm parameters
+users can confirm their choice before executing
 #>
-function Get-Compinfo {
-        [CmdletBinding()]
+function Set-Stuff {
+        [CmdletBinding(SupportsShouldProcess=$true,
+        ConfirmImpact='Medium')]
+
         Param(
                 
-                [Parameter(Mandatory=$true,ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)]
-                [String[]]$Computername,
-                
-                # turn on logging
-                [Switch[]]$Errorlog,
-                [String]$LogFile='c:\temp\errorlog.txt'
-        )
+                [Parameter(Mandatory=$true)]
+                [String[]]$Computername
+         )
+            Process{
+                        if ($PSCmdlet.ShouldProcess("$Computername","get-process")) { <# swap Mess it proper with commands#>
+                             Write-Output 'im changing something now'
+                        }
+                    }
+                }
 
-                    begin {}
-                    Process{
-                        foreach($Computer in $Computername) {
-                            Try {
+
                                 $os=Get-CimInstance -ClassName Win32_OperatingSystem -ComputerName $Computername -ErrorAction Stop -ErrorVariable CurrentError
                                 $disk=Get-CimInstance -ClassName Win32_Logicaldisk -ComputerName $Computername -filter "deviceid='c:'"
                                 $bios=Get-CimInstance -ClassName win32_bios -ComputerName $Computername
