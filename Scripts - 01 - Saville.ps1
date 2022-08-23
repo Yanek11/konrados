@@ -90,7 +90,8 @@ catch
 }
 #Endregion
 
-#Region 8 - ErrorActionPreference
+#Region 8 - ErrorActionPreference Finally IS NOT WORKING
+<# Finally IS NOT WORKING #>
 try {
     $CurrenterroractionPreference=$ErrorActionPreference
     $ErrorActionPreference="stop"
@@ -101,11 +102,16 @@ catch
     write-output "sometyhing went wrong"
     write-host -ForegroundColor yellow -BackgroundColor white $_.Exception
 }
-try {
-    
-}
+
 # Finally - this code will always execute
-finally {
+Finally {
     $ErrorActionPreference=$CurrenterroractionPreference
 }
+#Endregion
+
+#Region 9 - cmd.exe Errors handling. cmd writes to its own stream
+$executionoutput=Invoke-Expression "cmd.exe /c dir r:\dfdf"
+
+
+$executionoutput=Invoke-Expression "cmd.exe /c dir r:\dfdf 2>&1"
 #Endregion
