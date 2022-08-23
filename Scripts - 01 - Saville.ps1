@@ -109,9 +109,15 @@ Finally {
 }
 #Endregion
 
-#Region 9 - cmd.exe Errors handling. cmd writes to its own stream
+#Region 9 - cmd.exe Errors handling. 
+
+#cmd writes to its own stream
 $executionoutput=Invoke-Expression "cmd.exe /c dir r:\dfdf"
+$executionoutput
+# $executionoutput shows NO RESULT
 
-
+#cmd writes to STDOUT. STDERR (2) ->STDOUT (1)
 $executionoutput=Invoke-Expression "cmd.exe /c dir r:\dfdf 2>&1"
+$executionoutput
+# $executionoutput output is : "The system cannot find the path specified."
 #Endregion
