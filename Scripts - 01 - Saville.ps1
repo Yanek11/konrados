@@ -120,4 +120,28 @@ $executionoutput
 $executionoutput=Invoke-Expression "cmd.exe /c dir r:\dfdf 2>&1"
 $executionoutput
 # $executionoutput output is : "The system cannot find the path specified."
+#Endregion 
+
+#Region 10 CMDLETBINDING. Write-Verbose and Write-Debug
+<# 
+checking what the function/code is doing exactly
+#>
+Function Get-RandomMessage {
+[CmdletBinding()]
+param([parameter(ValueFromRemainingArguments=$true)][String[]] $args)
+Write-Verbose "Generating a random number"
+$number=Get-Random -Maximum 10 
+write-verbose "Number is $number"
+Write-debug "Start of switch statement"
+switch ($number)
+
+    {
+        {$_ -lt 4} {Write-Output "Howdy Y all" ;Write-debug "Less than 4"}
+        {$_ -ge 4 -and $_ -lt 7} {Write-Output "something    " ;Write-debug "4-6"}
+        default {Write-output "Top of the " Write-debug "Default"}
+
+    }
+
+}
+
 #Endregion
