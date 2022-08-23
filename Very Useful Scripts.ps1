@@ -52,4 +52,7 @@ get-process -name *bra* |sort  priority |ft -view priority
 get-process -name *bra* |sort  StartTime |ft -view StartTime| select name,StartTime
 get-process |gm
 
-#7 Write-out vs Write-Host
+#7 Write-output vs Write-Host 
+#DONt USE  Write-Host 
+Write-output # creates an object and casn be usedin a pipeline
+Write-Host # displays string on the screen. no pipeline
