@@ -21,3 +21,23 @@ foreach ($computername in $computers)
 }
 #Endregion
 
+#Region 2 Error handling
+Get-Content -path c:\sdfs.sds -ErrorVariable BadThings
+$BadThings
+if($BadThings)
+{
+    Write-Host -ForegroundColor blue -BackgroundColor Yellow "Had an issue, $($BadThings.exception)"
+}
+#Endregion
+
+#Region 3 Try-Catch 
+<# Try-Catch is catching a TERMINATING ERROR #>
+
+try {
+    
+    dsds -Path c:\sdfdfd
+}
+catch {
+    Write-Output "something went wrong"
+}
+#Endregion

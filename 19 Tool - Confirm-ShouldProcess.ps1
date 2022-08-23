@@ -1,22 +1,22 @@
 <#
 using SupportsShouldProcess, adds -WhatIf and -Confirm parameters
-users can confirm their choice before executing. USER ARE RESPONSIBLE
+users can confirm their choice before executing. USER ARE
+https://youtu.be/K4YDHFalAK8?t=17723
 #>
 function Set-Stuff {
         [CmdletBinding(SupportsShouldProcess=$true,
         ConfirmImpact='Medium')]
 
-        Param(
-                
-                [Parameter(Mandatory=$true)]
-                [String[]]$Computername
-         )
-            Process{
-                        if ($PSCmdlet.ShouldProcess("$Computername","get-process")) { <# swap Mess it proper with commands#>
-                             Write-Output 'im changing something now'
+        Param(  [Parameter(Mandatory=$true)]
+                [String[]]$Computername     )
+            
+                Process{
+                    if ($PSCmdlet.ShouldProcess("$Computername","get-process")) 
+                        {Write-Output 'im changing something now'}
                         }
                     }
-                }
+                
+                
 
 
                                 $os=Get-CimInstance -ClassName Win32_OperatingSystem -ComputerName $Computername -ErrorAction Stop -ErrorVariable CurrentError
@@ -50,8 +50,7 @@ function Set-Stuff {
                                     $Currenterror | Out-File $LogFile -Append
                                 }
                             }
-                        }
+                        
 
 
-}
-}
+
