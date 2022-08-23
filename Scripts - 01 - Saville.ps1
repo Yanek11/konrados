@@ -41,3 +41,71 @@ catch {
     Write-Output "something went wrong"
 }
 #Endregion
+
+#Region 4 Try-Catch with ErrorAction
+<# Try-Catch is catching a TERMINATING ERROR #>
+
+try {
+    
+    Get-Content -Path c:\sdfdfd -ErrorAction Stop
+}
+catch {
+    Write-Output "something went wrong"
+}
+#Endregion
+
+#Region 5 Try-Catch Types of  ErrorAction
+<# Try-Catch is catching a TERMINATING ERROR  -ErrorAction Stop or SilentlyContinue #>
+
+Get-Content -Path c:\sdfdfd -ErrorAction SilentlyContinue
+Get-Error
+#Endregion
+
+#Region 6 - Try-Catch Types of  ErrorAction
+try
+{    get-content -path c:\temp\adas.sdsd -ErrorAction stop  }
+catch 
+{
+    $ErrorMessage=$_.Exception.Message
+    Write-Output " something wrong - $ErrorMessage"
+    Write-Host -ForegroundColor blue -BackgroundColor white $_.Exception
+    $PSItem.InvocationInfo |Format-List * # $_. can also  be used instead of $PSItem
+
+}
+
+#Endregion
+
+#Region 7 - Types of Catch
+try
+{
+sdfsdfs
+}
+catch [System.Management.Automation.commandnotfoundexception]
+{
+    Write-Output "no idea what this command"   
+}
+catch 
+{
+    $_.Exception
+}
+#Endregion
+
+#Region 8 - ErrorActionPreference
+try {
+    $CurrenterroractionPreference=$ErrorActionPreference
+    $ErrorActionPreference="stop"
+    get-content -path r:\dsds
+} 
+catch
+{
+    write-output "sometyhing went wrong"
+    write-host -ForegroundColor yellow -BackgroundColor white $_.Exception
+}
+try {
+    
+}
+# Finally - this code will always execute
+finally {
+    $ErrorActionPreference=$CurrenterroractionPreference
+}
+#Endregion
