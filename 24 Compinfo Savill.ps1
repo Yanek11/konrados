@@ -17,7 +17,8 @@ Not very interesting
  0:N2  (0) - placeholder, colon (:) - formatting style, 2 - decimal places to retain
  letter N lets PowerShell know we want this to be formatted as a numeric value, and to include commas to separate the numbers.
  #>
-[cmdletbinding()]
+function CompInfo {
+ [cmdletbinding()]
 Param(
 [Parameter(ValuefromPipeline=$true,Mandatory=$true)][string[]]$computers)
 foreach ($computername in $computers)
@@ -54,4 +55,5 @@ foreach ($computername in $computers)
     {
         Write-Output "Failed for $computername"
     }
+}
 }
