@@ -83,3 +83,19 @@ $pass=Read-Host "What's your password?" -AsSecureString
 ### Powershell 7 and above
 ConvertFrom-SecureString -SecureString $pass -AsPlainText
 
+### VAR TYPES ### 
+$number=42
+$boolset=$true
+$stringval="hello"
+$charval='a'
+$number.GetType
+
+$charval='a'
+$charval.GetType() # returns String instead of Char
+[char]$charval='a' # casting type of Char on $ charval
+$charval.GetType() # returns 
+<#
+IsPublic IsSerial Name                                     BaseType
+-------- -------- ----                                     --------
+True     True     Char                                     System.ValueType
+#>
