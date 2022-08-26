@@ -83,7 +83,7 @@ $pass=Read-Host "What's your password?" -AsSecureString
 ### Powershell 7 and above
 ConvertFrom-SecureString -SecureString $pass -AsPlainText
 
-### VAR TYPES ### 
+#Region ## VAR TYPES ### 
 $number=42
 $boolset=$true
 $stringval="hello"
@@ -99,3 +99,53 @@ IsPublic IsSerial Name                                     BaseType
 -------- -------- ----                                     --------
 True     True     Char                                     System.ValueType
 #>
+#endregion
+
+#Region STRINGS
+
+$str1="word1"
+$str2="word2"
+$str3=$str1 +" "+ $str2
+<#
+$match=Select-String "This (is)" -InputObject "This is a string"
+ $match.Matches.Groups[0].value # shows" This is"
+ $match.Matches.Groups[1].value # shows first capture group "is"
+#> 
+
+<# example file computer.txt
+BiosCharacteristics={7,11,12,15,16,19,20,21,22,23,24,25,27,30,32,33,39,40,42,43}
+ BIOSVersion={"ACRSYS - 2","V1.15","INSYDE Corp. - 59040115"}
+ BuildNumber=
+ Caption=V1.15
+ CodeSet=
+ CurrentLanguage=
+ Description=V1.15
+ EmbeddedControllerMajorVersion=1
+ EmbeddedControllerMinorVersion=15
+ IdentificationCode=
+ InstallableLanguages=
+ InstallDate=
+ LanguageEdition=
+ ListOfLanguages=
+ Manufacturer=Insyde Corp.
+ Name=V1.15
+ OtherTargetOS=
+ PrimaryBIOS=TRUE
+ ReleaseDate=20200826000000.000000+000
+ SerialNumber=NXHHYSA4241943017724S00
+ SMBIOSBIOSVersion=V1.15
+ SMBIOSMajorVersion=3
+ SMBIOSMinorVersion=2
+ SMBIOSPresent=TRUE
+ SoftwareElementID=V1.15
+ SoftwareElementState=3
+ Status=OK
+ SystemBiosMajorVersion=1
+ SystemBiosMinorVersion=15
+ TargetOperatingSystem=0
+ Version=ACRSYS - 2
+
+
+#>
+#endregion
+
