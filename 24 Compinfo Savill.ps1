@@ -31,7 +31,7 @@ foreach ($computername in $computers)
     $lookinggood = $true
     try
     {
-        $win32CSOut = Get-CimInstance -ClassName win32_computersystem -ComputerName $computername -ErrorAction Stop
+        $win32CSOut = Get-CimInstance -ClassName win32_computersystem -ComputerName $computername -ErrorAction Stop 
     }
     catch
     {
