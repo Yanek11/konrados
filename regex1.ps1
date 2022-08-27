@@ -10,11 +10,11 @@ function get-string1 {
             
             # turn on logging
             [Switch[]]$Errorlog,
-            [String]$HTMLLogFile='c:\temp\errorlog.html',
+            [String]$HTMLLogFile='C:\TRAINING\Scripts\konrados\Logs\log.html',
             [String]$LogFile='c:\temp\errorlog.txt'
     )
     begin{
-    $serialnumbers=@{}
+    $strings=@{}
     # getting all text files. PWD - Print Working Directory
     #$files1=Get-ChildItem "C:\windows\"
     #$files=Get-ChildItem C:\Users\adm1 -filter '*.txt' -recurse
@@ -27,8 +27,8 @@ foreach ($file in $files)
             {
                 try {
 
-                    $serialnumber=Select-String "provides(.*)" -Path $file.fullname  -ErrorAction stop -ErrorVariable CurrentError
-                    $serialnumbers[$file.basename]=$serialnumber.Matches.Groups[0].Value 
+                    $string=Select-String "provides(.*)" -Path $file.fullname  -ErrorAction stop -ErrorVariable CurrentError
+                    $strings[$file.FullName]=$string.Matches.Groups[0].Value# +" "+ $string.Matches.Groups[0].Length
                     
                     }
                 
@@ -38,8 +38,8 @@ foreach ($file in $files)
                     #Write-EventLog -LogName Application -Source MyApp -EntryType Error -Message "$CurrentError" -EventId 11
                     if ($Errorlog) {
                         #$serialnumber=$file.fullname 
-                        $serialnumber="missing"
-                    $serialnumbers[$file.basename]=$serialnumber 
+                        $string="missing"
+                    $strings[$file.fullName]=$string 
                     #$serialnumbers[$file.basename]
                         <# version 1 -  HTML created by joining two parts but format not great
                         get-date |select-object DateTime| convertto-html| Out-File $htmlLogFile -append
@@ -55,7 +55,7 @@ foreach ($file in $files)
             }
              }
     end{
-        $serialnumbers|ft -AutoSize
+        $strings 
         #$file |gm
         #ConvertTo-Html -Body "$datehtml $filehtml" -Title "File with String Information" | Out-File $HTMLLogFile
         #$logfile.Length # ConvertTo-Html  # Out-File -FilePath $HTMLLogFile
