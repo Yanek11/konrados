@@ -168,5 +168,21 @@ $christmas=[System.DateTime]"24 December 2022"
 #endregion
 
 #region SCOPE
+function test-scope()
+{
+    write-output $defvar
+    write-output $global:globvar
+    write-output $script:scripvar
+    write-output $private:privvar
+    $funcvar="function"
+    $private:funcpriv="funcpriv"
+    $global:funcglobal="globfunc"
+}
+
+
+#endregion
+
+#region Invoke command and VARIABLES
+
 
 #endregion
