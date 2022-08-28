@@ -117,15 +117,24 @@ $totalofnumbercolumn="0"
 $OurObjectArray.foreach({write-host "name is "$_.Objectpropertyname ,"colour is "$_.Objectpropertycolour;[int]$totalofnumbercolumn=[int]$totalofnumbercolumn+$_.objectpropertynumber}) 
 $totalofnumbercolumn.GetType()
 
-# $totalofnumbercolumn is showing strings . adding is not working as $_.objectpropertynumber is returned as String
-#Select-Object *, @{ n = "IntVal"; e = { [int]($_.Name) } } |
-
-
 ## version with PIPING
 $totalofnumbercolumn="0"
 $OurObjectArray |ForEach-Object{write-host "name is "$_.objectpropertyname;$totalofnumbercolumn=$totalofnumbercolumn+$_.objectpropertynumber} 
 $totalofnumbercolumn.GetType()
 $totalofnumbercolumn
+#endregion
 
+#region FOREACH example with IF statement added
+Import-Csv .\list.csv
+$OurObjectArray=Import-Csv .\list.csv
+$totalofnumbercolumn="0" # resetting the value
+$OurObjectArray |ForEach-Object {
+    write-host "name is "$_.objectpropertyname
+    $totalofnumbercolumn=$totalofnumbercolumn+$_.objectpropertynumber
+        if($_.objectpropertynumber -gt 1000) {
+            write-host " this is bigger than 1000" $_.objectpropertyname
+        }
+                                } 
+$totalofnumbercolumn
 
 #endregion
