@@ -9,7 +9,7 @@ git pull
 
 
 git add .
-git commit -m '  commit from VM variables file'
+git commit -m 'from laptop'
 git push -u origin main
 
 git pull
