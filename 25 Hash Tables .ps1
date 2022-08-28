@@ -49,6 +49,10 @@ $favobj=New-Object psobject -Property $favthings
 ## new way PS 3 or newer
 $favobj2=[PSCustomObject]@{"Julie"="Sushi";"Ben"="Trains";"Abby"="Princess";"Kevin"="Minecraft"}
 
+#region FOREACH VS FOREACH-OBJECT - comparison
+ForEach is perfect if you have plenty of memory, want the best performance, and do not care about passing the output to another command via the pipeline.
+ForEach-Object (with its aliases % and ForEach) take input from the pipeline. Although it is slower to process everything, it gives you the benefit of Begin, Process, and End blocks. In addition, it allows you to stream the objects to another command via the pipeline.
+#endregion
 
 # FOREACH and ARRAY
 $names=@("Julie","Abby","ben","Kevin")
@@ -136,5 +140,4 @@ $OurObjectArray |ForEach-Object {
         }
                                 } 
 $totalofnumbercolumn
-
 #endregion
