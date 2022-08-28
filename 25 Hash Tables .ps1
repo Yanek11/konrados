@@ -99,3 +99,20 @@ measure-command -Expression{ $bigarray |Where-Object {$_ -gt 400 -and $_ -lt 100
 measure-command -Expression{ $bigarray.({$_ -gt 400 -and $_ -lt 10000}).ForEach({Write-Output "object $_ "})}
 
 #endregion
+
+#region FOREACH example
+Import-Csv .\list.csv
+$OurObjectArray=Import-Csv .\list.csv
+
+## version with array filtering 
+$OurObjectArray.foreach({write-host "name is "$_.Objectpropertyname ,"colour is "$_.Objectpropertycolour;$totalofnumbercolumn=$totalofnumbercolumn+$_.objectpropertynumber}) 
+$totalofnumbercolumn
+
+## version with PIPING
+$OurObjectArray |ForEach-Object{write-host "name is "$_.objectpropertyname;$totalofnumbercolumn=$totalofnumbercolumn+$_.objectpropertynumber}
+# same but filtering directly  on the array
+
+$totalofnumbercolumn
+
+
+#endregion
