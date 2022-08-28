@@ -9,7 +9,7 @@ git pull
 
 
 git add .
-git commit -m 'from laptop'
+git commit -m 'from laptop1'
 git push -u origin main
 
 git pull
