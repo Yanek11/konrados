@@ -101,7 +101,7 @@ True     True     Char                                     System.ValueType
 #>
 #endregion
 
-#Region STRINGS
+#Region STRINGS 1
 
 $str1="word1"
 $str2="word2"
@@ -149,3 +149,24 @@ BiosCharacteristics={7,11,12,15,16,19,20,21,22,23,24,25,27,30,32,33,39,40,42,43}
 #>
 #endregion
 
+#Region STRINGS 2
+$string1="the quick brown fox jumped over the lazy dog"
+$string1 -like "*qui*"
+$string2=$string1 + " who was not amused"
+#endregion
+
+#region TIME / DATE
+
+$today=Get-Date
+$today |select -ExpandProperty DayOfYear
+$today |select -ExpandProperty DayOfweek
+$today |select -ExpandProperty Day
+    #works on Powershell 5.1. fails on PS 7
+[datetime]::ParseExact("02-25-2011","MM-dd-yyyy",[System.Globalization.CultureInfo]::InvariantCulture)
+$christmas=[System.DateTime]"24 December 2022"
+($christmas-$today).Days
+#endregion
+
+#region SCOPE
+
+#endregion
