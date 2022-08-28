@@ -100,18 +100,31 @@ measure-command -Expression{ $bigarray.({$_ -gt 400 -and $_ -lt 10000}).ForEach(
 
 #endregion
 
-#region FOREACH example
+#region FOREACH example. calculating total value of a column
 Import-Csv .\list.csv
 $OurObjectArray=Import-Csv .\list.csv
 
+<#
+$OurObjectArray | ForEach-Object {
+    #Cast properties
+    $_.objectpropertynumber = [int]$_.objectpropertynumber
+    #Output object
+  $_
+} 
+#>
+$totalofnumbercolumn="0"
 ## version with array filtering 
-$OurObjectArray.foreach({write-host "name is "$_.Objectpropertyname ,"colour is "$_.Objectpropertycolour;$totalofnumbercolumn=$totalofnumbercolumn+$_.objectpropertynumber}) 
-$totalofnumbercolumn
+$OurObjectArray.foreach({write-host "name is "$_.Objectpropertyname ,"colour is "$_.Objectpropertycolour;[int]$totalofnumbercolumn=[int]$totalofnumbercolumn+$_.objectpropertynumber}) 
+$totalofnumbercolumn.GetType()
+
+# $totalofnumbercolumn is showing strings . adding is not working as $_.objectpropertynumber is returned as String
+#Select-Object *, @{ n = "IntVal"; e = { [int]($_.Name) } } |
+
 
 ## version with PIPING
-$OurObjectArray |ForEach-Object{write-host "name is "$_.objectpropertyname;$totalofnumbercolumn=$totalofnumbercolumn+$_.objectpropertynumber}
-# same but filtering directly  on the array
-
+$totalofnumbercolumn="0"
+$OurObjectArray |ForEach-Object{write-host "name is "$_.objectpropertyname;$totalofnumbercolumn=$totalofnumbercolumn+$_.objectpropertynumber} 
+$totalofnumbercolumn.GetType()
 $totalofnumbercolumn
 
 
