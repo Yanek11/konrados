@@ -62,3 +62,40 @@ $names | ForEach-Object -process {Write-Output $PSItem}
 $names | ForEach {Write-Output $_}
 ###4
 $names | % {Write-Output $_}
+
+$ counting numbers of objects in the array
+$names.Count
+
+# FOREACH
+ForEach-Object -InputObject (1..100000) {  $_ } |Measure-Object
+
+## measuring time to execute the command
+measure-command -expression {ForEach-Object -InputObject (1..10000000) {  $_ } |Measure-Object}
+
+#region example loop and hash table
+$array=@()
+$processes=Get-Process
+foreach($proc in $processes){
+    if($proc.WorkingSet/1mb -gt 100)
+    {
+        #$array+=New-Object pscustomobject -Property @{'ProcessName'=$proc.Name;'WorkingSet (MB)'=$proc.WorkingSet/ 1MB -as [int]}
+        $array+=New-Object pscustomobject -Property @{'ProcessName'=$proc.Name;'WorkingSet (MB)'="{0:N0}" -f($proc.WorkingSet/ 1MB -as [int32])}
+    }
+
+}
+#endregion
+
+#region Another way to filter - faster than a pipeline. COMPARING
+# creating a large array
+$bigarray2 = @()
+Measure-Command -Expression {  @(0..100000).foreach({ $bigArray2 += $_ }) }
+
+###1 pipeline way
+## checking it it works
+$bigarray |Where-Object {$_ -gt 400 -and $_ -lt 10000} |ForEach-Object {Write-Output "object $_ "} 
+## measuring using pipeline 1 sec 750 ms / 1.74 sec
+measure-command -Expression{ $bigarray |Where-Object {$_ -gt 400 -and $_ -lt 10000} |ForEach-Object {Write-Output "object $_ "}}
+### filtering directly on the array - 21 ms / 0.02 secs - 80 times faster
+measure-command -Expression{ $bigarray.({$_ -gt 400 -and $_ -lt 10000}).ForEach({Write-Output "object $_ "})}
+
+#endregion
