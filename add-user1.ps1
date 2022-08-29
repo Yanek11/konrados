@@ -18,7 +18,9 @@ SamAccountName = DOMAIN\GivenName.Surname
 Surname
 UserPrincipalName
  #endregion
- ################### ADDING USERS ###################
+
+################## ADDING USERS ###################
+#region
  distinguishedName OU=Users New,OU=Users,OU=Company,DC=kk1,DC=fun
 
  $NewUsersList=Import-CSV "Import_User_Sample_en.csv"
@@ -26,8 +28,9 @@ UserPrincipalName
 
 # checking if OK
  $NewUsersList.foreach({get-ADUser -fil -SamAccountName $_.'User Name' -Surname $_.'Last Name' -email ($_.'User Name'+'@kk1.fun') -UserPrincipalName ($_.'User Name'+'@kk1.fun') })
+#endregion
 
-################### FIXING INCORRECT UserPrincipalName ###################
+################## FIXING INCORRECT UserPrincipalName ###################
 #region REGEX finding incorrect values with multiple @s - "@kk1.fun@kk1.fun"
 ## 1st try - testing
 $testtext='sds@kk1.fun@kk1.fun'
@@ -50,8 +53,9 @@ $pattern='(?<=\@).+?(?=\@)'
 $pattern='(?<=\@).+?'
 $users = Get-ADUser -filter *  -SearchBase 'OU=Users Disabled,OU=Users,OU=Company,DC=kk1,DC=fun'
 $users |ForEach-Object { if($_.UserPrincipalName -match $pattern) { set-aduser $_ -UserPrincipalName ($_.GivenName+'.'+$_.Surname)  } }
+#endregion
 
-################### FIXING INCORRECT SamAccountName ###################
+#region ################### FIXING INCORRECT SamAccountName ###################
 # some accounts have @kk1.fun in SamAccountName
 # selecting accounts
 $testtext='sds@kk1.fun'
@@ -87,4 +91,6 @@ $users | ?{$_.SamAccountName -match $pattern } |measure # returns 4
 # fixed all users to correct format of SamAccountName
 #4
 $users |ForEach-Object { if($_.SamAccountName -match $pattern) { set-aduser $_ -SamAccountName ($_.GivenName+'.'+$_.Surname)  } }
+#endregion
 
+################### UDPATING EMAIL ###################
