@@ -8,7 +8,7 @@ function Write-OutRPSOption {
         {$PSItem -ge 7 -and $PSItem -le 9} { write-output "** SCISSORS **" }
     }
 }
-
+  
 function Start-RPSGame {
     param (
         $NoOfRounds
