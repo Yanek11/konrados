@@ -94,3 +94,18 @@ $users |ForEach-Object { if($_.SamAccountName -match $pattern) { set-aduser $_ -
 #endregion
 
 ################### UDPATING EMAIL ###################
+#distinguishedName OU=Users Disabled,OU=Users,OU=Company,DC=kk1,DC=fun
+# filtering accounts with no email address # update them with 'UserPrincipalName@kk1.fun'
+    ## version with piping
+    $usersemail=((Get-ADUser -filter *  -SearchBase 'OU=Users Disabled,OU=Users,OU=Company,DC=kk1,DC=fun' -Properties mail)|select -ExpandProperty mail)
+    ## version with filtering on object
+    $usersemail=(Get-ADUser -filter *  -SearchBase 'OU=Users Disabled,OU=Users,OU=Company,DC=kk1,DC=fun' -Properties mail)
+    $usersemail.mail
+
+#$pattern='(?<=\@).+?' # contains @
+$pattern='' # contains @
+$users | ?{$_.EmailAddress -match $pattern } 
+
+
+
+
