@@ -118,20 +118,40 @@ $users |ForEach-Object { if($_.SamAccountName -match $pattern) { set-aduser $_ -
     Get-ADUser -filter *  -SearchBase 'OU=Users Disabled,OU=Users,OU=Company,DC=kk1,DC=fun'| select samaccountname,mail
 
     <# MORE FUN 
-    - create an alias of existing email @KK1.FUN
-    - create email with a new domain @KK2.FUN
+    1 create an alias of existing email address. copy  attribute 'mail' to 'proxyaddresses'
+    2 create email with a new domain @KK4.FUN
         Set-ADUser $_.SamAccountName -add @{ProxyAddresses="smtp:$_.mail"}
     Set-ADUser $_.SamAccountName -EmailAddress ($user.SamAccountName + "@<domain>.org")
 
     #>
     foreach ($u in $user){
         Set-ADUser $u -add @{ProxyAddresses='smtp:'+$u_.EmailAddress}
-        
         Set-ADUser $u -emailaddress "$u@kk3.fun" }
 
-
-
-    
+# using Get-ADObject to copy all attributes
+<#
+https://rdr-it.com/en/scripts/save-the-proxyaddresses-attribute-of-users/
+#>
+<# 1 #> 
+        # EXPORTING OBJECTS => OU=Users Disabled
+        $allcontacts = get-adobject -filter {objectclass -eq "user" } -SearchBase 'OU=Users Disabled,OU=Users,OU=Company,DC=kk1,DC=fun' -property DistinguishedName,proxyaddresses,mail,ObjectGUID
+        $allcontacts | select ObjectGUID,DistinguishedName,@{Name='proxyAddresses';Expression={[string]::join(";", $($_.proxyAddresses))}} 
+        #$proxyAddresses = $_.proxyaddresses -split ';'
+        
+        
+        $contactou="OU=Users Disabled,OU=Users,OU=Company,DC=kk1,DC=fun"
+        $allcontacts |ForEach-Object{
+        $guid = $_.ObjectGUID
+        $proxyAddresses = $_.proxyaddresses -split ';'
+        $find = Get-ADObject -filter {(objectGUID -eq $guid)} -searchbase $contactou -Properties Name,ProxyAddresses,mail
+            #Write-Host "Utilisateur:"
+            #Write-Host $find.Name
+            #Write-Host "Current ProxyAddresses:" $find.proxyaddresses
+            Write-Host "Old ProxyAddresses    :" $proxyAddresses
+            Set-ADObject -Identity $guid -Replace @{proxyAddresses=$mail}    
+            Write-Host "-----------------"
+            Write-Host
+        }
 
 
 
