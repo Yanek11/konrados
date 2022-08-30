@@ -1,0 +1,16 @@
+powershell tasks
+1. finding files with a specific string in a name and saving in a nice HTNL output
+    - name of the file
+    - location 
+    - date modified
+2. finding specific content in a 
+3. machines with RAM/CPU/DISK less than . low disk space?
+4. specific software installed and version 
+5. machines last reboot
+6. user profile list per machines
+7. firewall rule 9RDP - emnabled?!
+8. IP address, hostname, uptime
+9. uninstall software?!
+10. rename / create folder on Public Desktop
+11. finding what users are logged in
+
