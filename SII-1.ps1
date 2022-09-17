@@ -35,14 +35,27 @@ scripts reports to be uploaded to a folder on share accessible by Patryk and me
 #region Disk Space Reports
 <# notes
 - servers: 8 x Windows 2016 servers
-- 1 file created daily (@ 00:00 hrs) "Disk_Report_CURRENT_DATE"
+- 1 report file per server created daily (@ 00:00 hrs) "DiskReport_SERVERNAME_CURRENTDATE"
 - script executes every 1H - 00:00, 01:00, 02:00 ... 23:00
 - connect to server
 - list volumes C and D
 - if free disk space < 25% - WARNING
 - if free disk space < 15% - CRITICAL
+- append results to file "DiskReport_SERVERNAME_CURRENTDATE"
 
-- append results to file "Disk_Report_CURRENT_DATE"
 #>
 #endregion
 
+#region services "Automated Start" check
+<#
+- 1 report file per server created daily (@ 00:00 hrs) "ServicesReport_SERVERNAME_CURRENTDATE"
+- script executes every 1H - 00:00, 01:00, 02:00 ... 23:00
+- connect to server
+- check "Automated Start" services status
+- if status "not Running" once in 24 hours - WARNING
+- if status "not Running" more than once per 24 hours - CRITICAL
+- append results to file "DiskReport_SERVERNAME_CURRENTDATE"
+
+#>
+
+#endregion
