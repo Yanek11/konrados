@@ -46,15 +46,15 @@ scripts reports to be uploaded to a folder on share accessible by Patryk and me
 #>
 #endregion
 
-#region services "Automated Start" check
-<#
+#region Services "Automated Start" check 
+<# NOTES / DETAILS
 - 1 report file per server created daily (@ 00:00 hrs) "ServicesReport_SERVERNAME_CURRENTDATE"
 - script executes every 1H - 00:00, 01:00, 02:00 ... 23:00
 - connect to server
 - check "Automated Start" services status
 - if status "not Running" once in 24 hours - WARNING
 - if status "not Running" more than once per 24 hours - CRITICAL
-- append results to file "DiskReport_SERVERNAME_CURRENTDATE"
+- append results to file "ServicesReport_SERVERNAME_CURRENTDATE"
 
 #>
 
