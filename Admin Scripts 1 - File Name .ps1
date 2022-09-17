@@ -12,19 +12,39 @@
 
 # Invoke-session
 # get-childitem -filter 
+
+
+## securely store password
 $Computers="srv02","srv03"
 $String1="dupa"
 $Creds=
 $Portwinrm='5985'
 $Path="C:\temp\"
-invoke-command -ComputerName $Computers -Credential $Creds -Port $Portwinrm -ScriptBlock {Get-ChildItem -Path $Path}
+$Path1="%USERPROFILE%"
+
+
+invoke-command -ComputerName $Computers -Port $Portwinrm -ScriptBlock {gci -filter "*interop*" -Path $using:path -File -recurse -Depth 6} |select fullname,pscomputername,creationtime,lastwritetime,@{Name="Size KB";Expression={ "{0:N0}" -f ($_.Length / 1KB) }} |ft 
+
+
+invoke-command -ComputerName $Computers -Port $Portwinrm -ScriptBlock { <#cmd echo#> cmd $path1 <#gci -filter "*interop*" -Path $using:path1 -File -recurse -Depth 6#>} |ft 
+^(?!.*Users.*).+$
+
+
+#invoke-command -ComputerName $Computers -Port $Portwinrm -ScriptBlock {Get-Childitem c:\temp\ | Select-Object FullName,creationtime,lastwritetime, @{Name="Size KB";Expression={ "{0:N0}" -f ($_.Length / 1KB) }}}
+
+
+
+invoke-command -ComputerName $Computers -Port $Portwinrm -ScriptBlock {gci c:\temp\ |select fullname,creationtime,lastwritetime|ft}
 
 #region ############ ESTABLISHING CONNECTION WINRM ############ 
 
 #region quick config
-    winrm quickconfig
+    ## Checking current config
     winrm get winrm/config
     winrm enumerate winrm/config/listener
+    ## quick config
+    winrm quickconfig
+    
     Get-Item WSMan:\localhost\Listener*
     Get-Item WSMan:\localhost\Client\TrustedHosts
     #### replacing / creating a list

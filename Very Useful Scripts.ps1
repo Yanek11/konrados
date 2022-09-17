@@ -14,6 +14,12 @@ Get-NetFirewallrule -DisplayName "*remote desktop*" # searching for a rule
 Get-NetFirewallrule -Name "RemoteDesktop-UserMode-In-TCP"
 #Endregion
 
+#region 3.1 - FIREWALL COMMAND LINE
+netsh advfirewall firewall
+netsh firewall show state
+#endregion
+
+
 #Region 4 ading multiple IPs
 Get-NetFirewallrule -Name "RemoteDesktop-UserMode-In-TCP" |   Get-NetFirewallAddressFilter | Set-NetFirewallAddressFilter -RemoteAddress '89.66.64.239','146.70.85.194','194.110.114.98'
 Get-NetFirewallrule -Name "WinRM 8888" |   Get-NetFirewallAddressFilter | Set-NetFirewallAddressFilter -RemoteAddress '10.0.0.0/24'
