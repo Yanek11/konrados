@@ -40,4 +40,5 @@ $procs | ft | ConvertTo-Html -Property | Out-File -FilePath t1.html
 $procs |gm
 # creating new properties by using hash tables
 get-process | select-object -Property name, @{name='procID';expression={$_.id}} |more
-
+# piping and sorting
+Get-Process | Where-Object {$_.Handle -gt 5000} | sort-object -Property Handle | ft name,Handle -AutoSize
