@@ -3,13 +3,21 @@ Get-CimClass -Namespace root/CIMV2 | where CimClassName -like win32*system*
 #Endregion
 
 #Region 2 Enabling NAT via HyperV
+## -InterfaceIndex needs to be of a Private HyperV vSwitch
 New-NetIPAddress -IPAddress 1.1.1.254 -PrefixLength 24 -InterfaceIndex 53
-<# home set-up
-New-NetIPAddress -IPAddress 192.168.69.1 -PrefixLength 24 -InterfaceIndex 53
-#>
 New-NetNat -Name NATNetwork -InternalIPInterfaceAddressPrefix 1.1.1.0/24
 Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0/24" -ExternalPort 3001 -Protocol TCP -InternalIPAddress "1.1.1.1" -InternalPort 3389 -NatName NATNetwork
 Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0/24" -ExternalPort 5001 -Protocol TCP -InternalIPAddress "1.1.1.1" -InternalPort 5985 -NatName NATNetwork
+
+<# home set-up
+GW 192.168.69.1
+New-NetIPAddress -IPAddress 1.1.1.254 -PrefixLength 24 -InterfaceIndex 53
+New-NetNat -Name NATNetwork -InternalIPInterfaceAddressPrefix 1.1.1.0/24
+Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0/24" -ExternalPort 3001 -Protocol TCP -InternalIPAddress "1.1.1.1" -InternalPort 3389 -NatName NATNetwork # SRVO1
+
+Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0/24" -ExternalPort 3002 -Protocol TCP -InternalIPAddress "1.1.1.2" -InternalPort 3389 -NatName NATNetwork # SRVO2
+Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0/24" -ExternalPort 3003 -Protocol TCP -InternalIPAddress "1.1.1.3" -InternalPort 3389 -NatName NATNetwork # SRVO3
+#>
 #Endregion
 
 #Region 3  Edit firewall rule scope with PowerShell ### ADDING MULTIPLE IPs - FIREWALL
