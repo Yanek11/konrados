@@ -1,4 +1,4 @@
-#Region 1 finding CLASS NAME for get-CimInstance
+#Region 1 finding CLASS NAME for get-CimInstance ggg
 Get-CimClass -Namespace root/CIMV2 | where CimClassName -like win32*system*
 #Endregion
 
