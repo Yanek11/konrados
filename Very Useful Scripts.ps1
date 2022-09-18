@@ -4,6 +4,9 @@ Get-CimClass -Namespace root/CIMV2 | where CimClassName -like win32*system*
 
 #Region 2 Enabling NAT via HyperV
 New-NetIPAddress -IPAddress 1.1.1.254 -PrefixLength 24 -InterfaceIndex 53
+<# home set-up
+New-NetIPAddress -IPAddress 192.168.69.1 -PrefixLength 24 -InterfaceIndex 53
+#>
 New-NetNat -Name NATNetwork -InternalIPInterfaceAddressPrefix 1.1.1.0/24
 Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0/24" -ExternalPort 3001 -Protocol TCP -InternalIPAddress "1.1.1.1" -InternalPort 3389 -NatName NATNetwork
 Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0/24" -ExternalPort 5001 -Protocol TCP -InternalIPAddress "1.1.1.1" -InternalPort 5985 -NatName NATNetwork
@@ -20,12 +23,12 @@ netsh firewall show state
 #endregion
 
 
-#Region 4 ading multiple IPs
+#Region 4 ading multiple IPs to Firewall Rule
 Get-NetFirewallrule -Name "RemoteDesktop-UserMode-In-TCP" |   Get-NetFirewallAddressFilter | Set-NetFirewallAddressFilter -RemoteAddress '89.66.64.239','146.70.85.194','194.110.114.98'
 Get-NetFirewallrule -Name "WinRM 8888" |   Get-NetFirewallAddressFilter | Set-NetFirewallAddressFilter -RemoteAddress '10.0.0.0/24'
 #Endregion
 
-#region 5 - How to execute fast script
+#region 5 - How to execute fast script - remote PS
 ### Both commands solve the same problem but Invoke is much more efficient
     #1 - FAST
 invoke-command -ComputerName (Get-Content servers.txt) {}
@@ -71,6 +74,6 @@ Write-output # creates an object and casn be usedin a pipeline
 Write-Host # displays string on the screen. no pipeline
 #Endregion
 
-#Region 8 ----
-
+#Region 8 Select-String - finding string in object
+Get-NetIPAddress |select-string -InputObject {$_.IPAddress} -Pattern 10
 #Endregion
