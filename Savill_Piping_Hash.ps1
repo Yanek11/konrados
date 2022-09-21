@@ -55,3 +55,27 @@ get-process | Out-GridView -PassThru |Stop-Process # using GUI to kill the proce
 Get-Content -Path .\procs.txt |gm
 cat .\procs.txt
 Remove-Item .\procs.txt
+
+#region DATA Exporting and Importing
+### CSV ###
+get-process |where-object {$_.name -like "m*"} |export-csv -Path test_csv.csv 
+get-process |where-object {$_.name -like "m*"} |Export-Clixml -Path test_xml.xml
+Import-Csv -Path test_csv.csv # imports as a Custom PS Object System.Management.Automation.PSCustomObject
+# how can we use export/import
+get-process |export-csv -Path test_csv.csv 
+$procs=Import-Csv -Path test_csv.csv
+
+$procs |where-object {$_.name -like "*note*"} |stop-process -PassThru #kills notepad process and shows status -passthru
+<# COMMENTS
+Stop-Process accepts ID, Name and Object
+what happens if there is a notepad process with different ID / new instance?!
+$procs |where-object {$_.name -like "*note*"} |stop-process -PassThru 
+command works as Stop-Process took name of the process as input
+#> 
+#endregion
+
+### XML
+get-process |Where-Object {$_.name -like "*run*"} |Export-Clixml -Path test_xml.xml
+Import-Clixml -Path test_xml.xml 
+$procs=Import-Clixml -Path test_xml.xml 
+$procs |gm
