@@ -1,3 +1,5 @@
+########## VARIOUS COMMANDS and TIPS
+
 <# 
 - start notepad
 - getting notepad object and killing it
@@ -42,3 +44,14 @@ $procs |gm
 get-process | select-object -Property name, @{name='procID';expression={$_.id}} |more
 # piping and sorting
 Get-Process | Where-Object {$_.Handle -gt 5000} | sort-object -Property Handle | ft name,Handle -AutoSize
+
+# redirecting output to files/clipboard
+get-process w* | clip
+get-alias del
+get-process | Out-File procs.txt
+get-process | Out-GridView # kind of GUI version
+get-process | Out-GridView -PassThru |Stop-Process # using GUI to kill the process
+
+Get-Content -Path .\procs.txt |gm
+cat .\procs.txt
+Remove-Item .\procs.txt
