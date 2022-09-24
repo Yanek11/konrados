@@ -79,3 +79,15 @@ get-process |Where-Object {$_.name -like "*run*"} |Export-Clixml -Path test_xml.
 Import-Clixml -Path test_xml.xml 
 $procs=Import-Clixml -Path test_xml.xml 
 $procs |gm
+# output is Deserialized object
+TypeName: Deserialized.System.Diagnostics.Process
+
+get-process |Measure-Object
+get-process | gm |more
+get-process | sort ws -Descending |select -First 2
+Get-WinEvent -LogName security -MaxEvents 1
+ping srv02
+invoke-command -ComputerName srv02,SRV03 -ScriptBlock {Get-WinEvent -LogName application -MaxEvents 1}
+
+
+
