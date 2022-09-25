@@ -19,7 +19,7 @@ Get-Item WSMan:\localhost\Client\TrustedHosts
 #### replacing / creating a list
 Set-Item WSMan:\localhost\Client\TrustedHosts -Value 'vm1,vm2,vm3'
 #### adding / concatenating
-Set-Item WSMan:\localhost\Client\TrustedHosts -Value '192.168.69.134' -Concatenate
+Set-Item WSMan:\localhost\Client\TrustedHosts -Value '192.168.69.128' -Concatenate
 
 ### DELETE HTTPS listener
 winrm delete winrm/config/Listener?Address=*+Transport=HTTPs
@@ -42,6 +42,12 @@ winrm enumerate winrm/config/listener
 winrm set winrm/config/Client '@{AllowUnencrypted = "true"}'
 # compromising security
 
+
+###
+winrm set winrm/config/client/auth '@{Basic="true"}'
+winrm set winrm/config/service/auth '@{Basic="true"}'
+winrm set winrm/config/service '@{AllowUnencrypted="true"}'
+###
 ### laptop
 winrm set winrm/config/Client '@{AllowUnencrypted = "true"}'
 Set-Item WSMan:\localhost\Client\TrustedHosts -Value '20.0.55.132' -Concatenate
