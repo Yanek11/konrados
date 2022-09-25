@@ -50,7 +50,7 @@ winrm set winrm/config/service '@{AllowUnencrypted="true"}'
 ###
 ### laptop
 winrm set winrm/config/Client '@{AllowUnencrypted = "true"}'
-Set-Item WSMan:\localhost\Client\TrustedHosts -Value '20.0.55.132' -Concatenate
+Set-Item WSMan:\localhost\Client\TrustedHosts -Value '192.168.69.128',  '192.168.69.141'-Concatenate
 
 winrs -r:20.0.55.132 dir
 winrs -r:20.0.55.132 -un -u:kk -p:A241071z123! ipconfig
@@ -85,7 +85,7 @@ WinRM e winrm/config/listener
 ***************************
 
 ### Connecting from client
-$hostName="vm2kk1.uksouth.cloudapp.azure.com" 
+$hostName="laptop" 
 $winrmPort = "5986"
 
 # Get the credentials of the machine
