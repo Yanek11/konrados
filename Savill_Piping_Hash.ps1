@@ -89,5 +89,11 @@ Get-WinEvent -LogName security -MaxEvents 1
 ping srv02
 invoke-command -ComputerName srv02,SRV03 -ScriptBlock {Get-WinEvent -LogName application -MaxEvents 1}
 
+# Ethernet adapters
+Get-NetAdapter
+## disabling 
+invoke-command -ComputerName srv02 -ScriptBlock {get-netadapter |Disable-NetAdapter }
+# VM1 update
+
 
 

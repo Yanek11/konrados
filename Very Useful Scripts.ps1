@@ -9,6 +9,7 @@ New-NetNat -Name NATNetwork -InternalIPInterfaceAddressPrefix 1.1.1.0/24
 Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0/24" -ExternalPort 3001 -Protocol TCP -InternalIPAddress "1.1.1.1" -InternalPort 3389 -NatName NATNetwork
 Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0/24" -ExternalPort 5001 -Protocol TCP -InternalIPAddress "1.1.1.1" -InternalPort 5985 -NatName NATNetwork
 
+
 <# home set-up
 GW 192.168.69.1
 New-NetIPAddress -IPAddress 1.1.1.254 -PrefixLength 24 -InterfaceIndex 53
@@ -85,3 +86,13 @@ Write-Host # displays string on the screen. no pipeline
 #Region 8 Select-String - finding string in object
 Get-NetIPAddress |select-string -InputObject {$_.IPAddress} -Pattern 10
 #Endregion
+
+#region 9 firewall powershell searching for a rule
+<# niestety na Windows PL version nie moglem znaleźć po Name = WINRM :(
+Name                        : Zdalne zarządzanie sys. Windows (ruch przych. HTTP)    
+#>
+$fw=new-object -ComObject HNetCfg.fwpolicy2
+$fw.rules | where-object {$_.localports -eq "5985"}
+# check which Net profile is enabled. change profile to private
+Get-NetConnectionProfile
+Set-NetConnectionProfile -InterfaceIndex 20 -NetworkCategory Private
