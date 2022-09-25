@@ -94,7 +94,7 @@ Get-NetAdapter
 ## disabling 
 invoke-command -ComputerName srv02 -ScriptBlock {get-netadapter |Disable-NetAdapter }
 # VM1 update
-
+  
 
 
 
