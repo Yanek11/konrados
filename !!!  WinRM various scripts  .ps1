@@ -42,7 +42,7 @@ winrm enumerate winrm/config/listener
 winrm set winrm/config/Client '@{AllowUnencrypted = "true"}'
 # compromising security
 
-
+  
 ###
 winrm set winrm/config/client/auth '@{Basic="true"}'
 winrm set winrm/config/service/auth '@{Basic="true"}'
