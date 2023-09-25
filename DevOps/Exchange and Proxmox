@@ -16,4 +16,52 @@ https://practical365.com/exchange-server-2013-ssl-certificates/
 https://practical365.com/avoiding-exchange-2013-server-names-ssl-certificates/
 
 Outlook Anywhere
+
+checking
 get-OutlookAnywhere | select server,ExternalHostname, InternalHostname
+https://mail.kakaka.store
+
+setting
+get-outlookanywhere | set-OutlookAnywhere -ExternalHostname mail.kakaka.store -InternalHostname mail.kakaka.store -ExternalClientRequireSSL $true -InternalClientRequireSSL $true -DefaultAuthenticationMethod NTLM
+
+MAPI
+
+checking
+Get-MapiVirtualDirectory | Select Server,ExternalURL,InternalURL |   Set-MAPIVirtualDirectory -ExternalUrl https://mail.kakaka.store/mapi -InternalUrl https://mail.kakaka.store/mapi
+setting
+Get-MapiVirtualDirectory |   Set-MAPIVirtualDirectory -ExternalUrl https://mail.kakaka.store/mapi -InternalUrl https://mail.kakaka.store/mapi
+
+Outlook WebApp
+
+check
+Get-OwaVirtualDirectory | Select Server,ExternalURL,InternalURL | fl
+setting
+Get-OwaVirtualDirectory | Set-OwaVirtualDirectory -ExternalUrl https://mail.kakaka.store/owa -InternalUrl https://mail.kakaka.store/owa
+
+Exchange Control Panel
+
+getting
+Get-EcpVirtualDirectory 
+setting
+Get-EcpVirtualDirectory | Set-EcpVirtualDirectory -ExternalUrl https://mail.kakaka.store/ecp -InternalUrl https://mail.kakaka.store/ecp
+
+Exchange Active Sync
+getting
+Get-ActiveSyncVirtualDirectory | select server,externalurl,internalurl | fl
+setting
+Get-ActiveSyncVirtualDirectory | Set-ActiveSyncVirtualDirectory -ExternalUrl https://mail.kakaka.store/Microsoft-Server-ActiveSync -InternalUrl https://mail.kakaka.store/Microsoft-Server-ActiveSync
+
+Exchange Web Services
+Get-WebServicesVirtualDirectory | Select Server,ExternalURL,InternalURL | fl
+Get-WebServicesVirtualDirectory | Set-WebServicesVirtualDirectory -ExternalUrl https://mail.kakaka.store/EWS/Exchange.asmx -InternalUrl https://mail.kakaka.store/EWS/Exchange.asmx
+
+Offline Address Book
+Get-OabVirtualDirectory | Select Server,ExternalURL,InternalURL | fl
+Get-OabVirtualDirectory | Set-OabVirtualDirectory -ExternalUrl https://mail.kakaka.store/OAB -InternalUrl https://mail.kakaka.store/OAB
+
+Autodiscover SCP - service connection point
+
+Get-ClientAccessServer | Select Name,AutoDiscoverServiceInternalURI
+Get-ClientAccessService  | Select Name,AutoDiscoverServiceInternalURI # newer version of command
+
+Get-ClientAccessService | Set-ClientAccessService -AutoDiscoverServiceInternalUri https://mail.kakaka.store/Autodiscover/Autodiscover.xml
