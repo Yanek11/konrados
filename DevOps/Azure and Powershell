@@ -1,0 +1,32 @@
+# adding  DNS server 
+$nic = Get-AzNetworkInterface -ResourceGroupName "RG1" -Name "azdc03482"
+$nic.DnsSettings.DnsServers.remove("1.1.1.15")
+$nic | Set-AzNetworkInterface
+
+### Configuring new VMs in Azure with minimum GUI, maximum PS/CLI
+
+# Enabling Remote Powershell
+Enable-PSRemoting -Force
+New-NetFirewallRule -Name "Allow WinRM HTTPS" -DisplayName "WinRM HTTPS" -Enabled True -Profile Any -Action Allow -Direction Inbound -LocalPort 5986 -Protocol TCP
+$thumbprint = (New-SelfSignedCertificate -DnsName $env:COMPUTERNAME -CertStoreLocation Cert:\LocalMachine\My).Thumbprint
+$command = "winrm create winrm/config/Listener?Address=*+Transport=HTTPS @{Hostname=""$env:computername""; CertificateThumbprint=""$thumbprint""}"
+cmd.exe /C $command
+
+Get-Item WSMan:\localhost\Client\TrustedHosts
+
+# Machine 1 - non domain - 3.3.3.5
+Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value 'dc01.kaka.local'
+Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value '*.kaka.local'
+
+# Machine 2 - domain joined - dc01.kaka.local
+Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value 3.3.3.5
+
+# checking 
+Get-Item WSMan:\localhost\Client\TrustedHosts
+
+# Connecting to remote machine in Azure via VPN 
+Enter-PSSession -ComputerName 3.3.3.5 -Credential kkadm
+
+# Firewall
+## enabling ICMP
+netsh advfirewall firewall add rule name="Allow ICMPv4" protocol="icmpv4:8,any" dir=in action=allow
