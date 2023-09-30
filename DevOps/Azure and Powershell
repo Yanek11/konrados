@@ -3,7 +3,7 @@
 # changing VM DNS must be done from AZ Powershell not locally 
 # adding  DNS server via AZ Powershell
 Get-AzNetworkInterface
-$nic = Get-AzNetworkInterface -ResourceGroupName "RG1" -Name "azexch-04625 "
+$nic = Get-AzNetworkInterface -ResourceGroupName "RG1" -Name "azexch-03470"
 $nic.DnsSettings.DnsServers.add("1.1.1.15")
 ## Azure DNS 168.63.129.16  
 $nic.DnsSettings.DnsServers.add("168.63.129.16")
