@@ -3,11 +3,15 @@
 # changing VM DNS must be done from AZ Powershell not locally 
 # adding  DNS server via AZ Powershell
 Get-AzNetworkInterface
-$nic = Get-AzNetworkInterface -ResourceGroupName "RG1" -Name "azexch-03470"
+$nic = Get-AzNetworkInterface -ResourceGroupName "RG1" -Name "azexch-04625 "
 $nic.DnsSettings.DnsServers.add("1.1.1.15")
-## Azure DNS 168.63.129.16
+## Azure DNS 168.63.129.16  
 $nic.DnsSettings.DnsServers.add("168.63.129.16")
 $nic | Set-AzNetworkInterface
+
+# checking if change OK
+$nic = Get-AzNetworkInterface -ResourceGroupName "RG1" -Name "azexch-04625 "
+$nic.DnsSettings.DnsServers
 
 # adding DNS server via local Powershell - - only for non-Azure VM
 Get-DnsClientServerAddress
@@ -43,6 +47,8 @@ Enter-PSSession -ComputerName 3.3.3.4 -Credential kkadm # local admin
 Enter-PSSession -ComputerName 3.3.3.4 -Credential "adm1@kaka.local" # AD admin
 
 ### AD / DOMAIN ###
+# renaming machine
+Rename-Computer -newname azExch-04
 # adding computer to a AD domain
 Add-Computer -DomainName kaka.local -Restart
 
@@ -50,3 +56,11 @@ Add-Computer -DomainName kaka.local -Restart
 ### FIREWALL ###
 ## enabling ICMP
 netsh advfirewall firewall add rule name="Allow ICMPv4" protocol="icmpv4:8,any" dir=in action=allow
+
+### Exchange installation via Powershell on azDC03 (1vCPU/3.5GB RAM) ###
+
+# checking software version
+Get-WmiObject -Class Win32_Product | where-object name -like *Exchange* | select-object Name, Version
+
+# removing unfinished Exchange installation
+setup.exe /mode:uninstall /IAcceptExchangeServerLicenseTerms_DiagnosticDataON
