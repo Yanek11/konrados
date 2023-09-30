@@ -1,9 +1,22 @@
-# adding  DNS server 
-$nic = Get-AzNetworkInterface -ResourceGroupName "RG1" -Name "azdc03482"
-$nic.DnsSettings.DnsServers.remove("1.1.1.15")
+### DNS CONFIGURATION ###
+
+# changing VM DNS must be done from AZ Powershell not locally 
+# adding  DNS server via AZ Powershell
+Get-AzNetworkInterface
+$nic = Get-AzNetworkInterface -ResourceGroupName "RG1" -Name "azexch-03470"
+$nic.DnsSettings.DnsServers.add("1.1.1.15")
+## Azure DNS 168.63.129.16
+$nic.DnsSettings.DnsServers.add("168.63.129.16")
 $nic | Set-AzNetworkInterface
 
-### Configuring new VMs in Azure with minimum GUI, maximum PS/CLI
+# adding DNS server via local Powershell - - only for non-Azure VM
+Get-DnsClientServerAddress
+Set-DNSClientServerAddress "Ethernet" –ServerAddresses ("1.1.1.15", "168.63.129.16")
+
+# resetting DNS addresses
+Set-DNSClientServerAddress -ResetServerAddresses
+
+### POWERSHELL REMOTE ###
 
 # Enabling Remote Powershell
 Enable-PSRemoting -Force
@@ -25,8 +38,15 @@ Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value 3.3.3.5
 Get-Item WSMan:\localhost\Client\TrustedHosts
 
 # Connecting to remote machine in Azure via VPN 
-Enter-PSSession -ComputerName 3.3.3.5 -Credential kkadm
+Enter-PSSession -ComputerName 3.3.3.4 -Credential kkadm # local admin
+## AD login
+Enter-PSSession -ComputerName 3.3.3.4 -Credential "adm1@kaka.local" # AD admin
 
-# Firewall
+### AD / DOMAIN ###
+# adding computer to a AD domain
+Add-Computer -DomainName kaka.local -Restart
+
+
+### FIREWALL ###
 ## enabling ICMP
 netsh advfirewall firewall add rule name="Allow ICMPv4" protocol="icmpv4:8,any" dir=in action=allow
