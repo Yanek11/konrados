@@ -36,7 +36,7 @@ Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value 'dc01.kaka.local'
 Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value '*.kaka.local'
 
 # Machine 2 - domain joined - dc01.kaka.local
-Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value 3.3.3.5
+Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value '3.3.3.5','3.3.3.4','1.1.1.16' -Concatenate
 
 # checking 
 Get-Item WSMan:\localhost\Client\TrustedHosts
@@ -63,9 +63,13 @@ netsh advfirewall firewall add rule name="Allow ICMPv4" protocol="icmpv4:8,any" 
 Get-WmiObject -Class Win32_Product | where-object name -like *Exchange* | select-object Name, Version
 
 # removing unfinished Exchange installation
-setup.exe /mode:uninstall /IAcceptExchangeServerLicenseTerms_DiagnosticDataON
+./setup.exe /mode:uninstall /IAcceptExchangeServerLicenseTerms_DiagnosticDataON 
 
 ## installing features
 Install-WindowsFeature RSAT-Clustering-CmdInterface, NET-Framework-45-Features, RPC-over-HTTP-proxy, RSAT-Clustering, RSAT-Clustering-CmdInterface, RSAT-Clustering-Mgmt, RSAT-Clustering-PowerShell, Web-Mgmt-Console, WAS-Process-Model, Web-Asp-Net45, Web-Basic-Auth, Web-Client-Auth, Web-Digest-Auth, Web-Dir-Browsing, Web-Dyn-Compression, Web-Http-Errors, Web-Http-Logging, Web-Http-Redirect, Web-Http-Tracing, Web-ISAPI-Ext, Web-ISAPI-Filter, Web-Lgcy-Mgmt-Console, Web-Metabase, Web-Mgmt-Console, Web-Mgmt-Service, Web-Net-Ext45, Web-Request-Monitor, Web-Server, Web-Stat-Compression, Web-Static-Content, Web-Windows-Auth, Web-WMI, Windows-Identity-Foundation, RSAT-ADDS
 
-.\Setup.exe /mode:Install /role:Mailbox /OrganizationName: /IAcceptExchangeServerLicenseTerms /IAcceptExchangeServerLicenseTerms_DiagnosticDataOFF
+.\Setup.exe /mode:Install /role:Mailbox /OrganizationName:"First Organization"  /IAcceptExchangeServerLicenseTerms_DiagnosticDataOFF 
+
+# changing Autodiscover namespace to the same as exisiting Exchange server
+Get-ClientAccessService |select name, autodiscoverserviceinternaluri
+Set-Clientaccessservice -identity "azexch-03" -autodiscoverserviceinternaluri https://mail.kakaka.store/Autodiscover/Autodiscover.xml
