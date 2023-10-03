@@ -2,16 +2,19 @@
 
 # changing VM DNS must be done from AZ Powershell not locally 
 # adding  DNS server via AZ Powershell
+
 Get-AzNetworkInterface
-$nic = Get-AzNetworkInterface -ResourceGroupName "RG1" -Name "azexch-03470"
+$nic = Get-AzNetworkInterface -ResourceGroupName "RG1" -Name "azexch033"
 $nic.DnsSettings.DnsServers.add("1.1.1.15")
 ## Azure DNS 168.63.129.16  
 $nic.DnsSettings.DnsServers.add("168.63.129.16")
 $nic | Set-AzNetworkInterface
 
+
 # checking if change OK
-$nic = Get-AzNetworkInterface -ResourceGroupName "RG1" -Name "azexch-04625 "
+$nic = Get-AzNetworkInterface -ResourceGroupName "RG1" -Name "azexch033"
 $nic.DnsSettings.DnsServers
+
 
 # adding DNS server via local Powershell - - only for non-Azure VM
 Get-DnsClientServerAddress
@@ -36,15 +39,17 @@ Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value 'dc01.kaka.local'
 Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value '*.kaka.local'
 
 # Machine 2 - domain joined - dc01.kaka.local
-Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value '3.3.3.5','3.3.3.4','1.1.1.16' -Concatenate
+Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value '3.3.3.15','3.3.3.16','1.1.1.16','1.1.1.15' -Concatenate
 
 # checking 
 Get-Item WSMan:\localhost\Client\TrustedHosts
 
 # Connecting to remote machine in Azure via VPN 
-Enter-PSSession -ComputerName 3.3.3.4 -Credential kkadm # local admin
+Enter-PSSession -ComputerName 3.3.3.16 -Credential kkadm # local admin
 ## AD login
-Enter-PSSession -ComputerName 3.3.3.4 -Credential "adm1@kaka.local" # AD admin
+Enter-PSSession -ComputerName 3.3.3.16 -Credential "ad-adm@ad.kakaka.store" # AD admin
+
+Enter-PSSession -ComputerName 1.1.1.16 -Credential "ad-adm@ad.kakaka.store" # AD admin
 
 ### AD / DOMAIN ###
 # renaming machine
@@ -57,7 +62,7 @@ Add-Computer -DomainName kaka.local -Restart
 ## enabling ICMP
 netsh advfirewall firewall add rule name="Allow ICMPv4" protocol="icmpv4:8,any" dir=in action=allow
 
-### Exchange installation via Powershell on azDC03 (1vCPU/3.5GB RAM) ###
+### Second Exchange installation via remote Powershell  (1vCPU/3.5GB RAM) ###
 
 # checking software version
 Get-WmiObject -Class Win32_Product | where-object name -like *Exchange* | select-object Name, Version
@@ -70,6 +75,46 @@ Install-WindowsFeature RSAT-Clustering-CmdInterface, NET-Framework-45-Features, 
 
 .\Setup.exe /mode:Install /role:Mailbox /OrganizationName:"First Organization"  /IAcceptExchangeServerLicenseTerms_DiagnosticDataOFF 
 
-# changing Autodiscover namespace to the same as exisiting Exchange server
+### NEW EXCHANGE 2016 INSTALLATION ###
+# adding pin point DNS - 1.1.1.16 
+mail.kakaka.store
+autodiscover.kakaka.store
+# testing
+Resolve-DnsName autodiscover.kakaka.store
+Resolve-DnsName mail.kakaka.store
+
+
+# setting new Namespace URLs
+# https://practical365.com/exchange-server-2016-client-access-namespace-configuration/
+
+$srv="EXCH01"
+
+#1 OWA - Outlook Web App
+Get-OwaVirtualDirectory -Server $srv |select InternalUrl # checking
+Get-OwaVirtualDirectory -Server $srv | Set-OwaVirtualDirectory -InternalUrl https://mail.kakaka.store/owa -ExternalUrl https://mail.kakaka.store/owa
+
+#2 Autodiscover
 Get-ClientAccessService |select name, autodiscoverserviceinternaluri
-Set-Clientaccessservice -identity "azexch-03" -autodiscoverserviceinternaluri https://mail.kakaka.store/Autodiscover/Autodiscover.xml
+Set-Clientaccessservice -identity $srv -autodiscoverserviceinternaluri https://mail.kakaka.store/Autodiscover/Autodiscover.xml
+
+#3 ECP - Exchange COntrol Panel
+Get-EcpVirtualDirectory -Server $srv |select InternalUrl, -ExternalUrl
+Get-EcpVirtualDirectory -Server $srv | Set-EcpVirtualDirectory -ExternalUrl $null -InternalUrl https://mail.kakaka.store/ecp
+
+#4 EWS - Exchange Web Services
+Get-WebServicesVirtualDirectory -Server $srv
+Get-WebServicesVirtualDirectory -Server $srv | Set-WebServicesVirtualDirectory -ExternalUrl $null -InternalUrl https://mail.kakaka.store/EWS/Exchange.asmx 
+
+#5 MAPI 
+Get-MapiVirtualDirectory -Server $srv | Set-MapiVirtualDirectory -ExternalUrl $null -InternalUrl https://mail.kakaka.store/mapi
+
+#6 ActiveSync
+Get-ActiveSyncVirtualDirectory -Server $srv | Set-ActiveSyncVirtualDirectory -ExternalUrl https://mail.kakaka.store/Microsoft-Server-ActiveSync -InternalUrl https://mail.kakaka.store/Microsoft-Server-ActiveSync
+
+#7 OAB - Offline Address Book
+Get-OabVirtualDirectory -Server $srv | Set-OabVirtualDirectory -ExternalUrl $null -InternalUrl https://mail.kakaka.store/OAB
+
+#8 Powershell - OPTIONAL ?!
+
+Get-powershellVirtualDirectory -Server $srv | Set-powershellVirtualDirectory -ExternalUrl $null -InternalUrl https://mail.kakaka.store/powershell
+
