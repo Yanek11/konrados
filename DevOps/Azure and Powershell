@@ -36,7 +36,7 @@ Get-Item WSMan:\localhost\Client\TrustedHosts
 
 # Machine 1 - non domain - 3.3.3.5
 Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value 'dc01.kaka.local'
-Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value '*.kaka.local'
+Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value '*.kakaka.store'
 
 # Machine 2 - domain joined - dc01.kaka.local
 Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value '3.3.3.15','3.3.3.16','1.1.1.16','1.1.1.15' -Concatenate
@@ -121,3 +121,11 @@ Get-powershellVirtualDirectory -Server $srv | Set-powershellVirtualDirectory -Ex
 
 # checking Exchange services status where StartType Automatic
 get-service | where {$_.status -eq "Stopped" -and $_.Name -like "*exchange*" -and $_.StartType -like "Automatic*"}
+
+# Exchange Management Shell - connecting remotely from another machine to Exchange 
+
+Set-ExecutionPolicy RemoteSigned
+$UserCredential = Get-Credential
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://exch01.ad.kakaka.store/powershell -Authentication Kerberos -Credential $UserCredential
+Import-PSSession $Session -DisableNameChecking -AllowClobber
+
