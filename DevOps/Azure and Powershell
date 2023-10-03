@@ -118,3 +118,6 @@ Get-OabVirtualDirectory -Server $srv | Set-OabVirtualDirectory -ExternalUrl $nul
 
 Get-powershellVirtualDirectory -Server $srv | Set-powershellVirtualDirectory -ExternalUrl $null -InternalUrl https://mail.kakaka.store/powershell
 
+
+# checking Exchange services status where StartType Automatic
+get-service | where {$_.status -eq "Stopped" -and $_.Name -like "*exchange*" -and $_.StartType -like "Automatic*"}
