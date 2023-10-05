@@ -129,3 +129,14 @@ $UserCredential = Get-Credential
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://exch01.ad.kakaka.store/powershell -Authentication Kerberos -Credential $UserCredential
 Import-PSSession $Session -DisableNameChecking -AllowClobber
 
+# Exchange Health check
+Get-ServerHealth -identity azexch03 |where-object {$_.alertvalue -eq "unHealthy"}
+# checking MAPI connectivity
+Get-MailboxDatabase | Test-MAPIConnectivity
+
+# dns
+Resolve-DnsName -Type mx kakaka.store -Server 9.9.9.9 |FT -AutoSize
+Resolve-DnsName -Type A MX.kakaka.store -Server 9.9.9.9 |FT -AutoSize
+Resolve-DnsName -Type txt AUTODISCOVER.kakaka.store -Server 9.9.9.9 |FT -AutoSize
+
+
