@@ -139,4 +139,8 @@ Resolve-DnsName -Type mx kakaka.store -Server 9.9.9.9 |FT -AutoSize
 Resolve-DnsName -Type A MX.kakaka.store -Server 9.9.9.9 |FT -AutoSize
 Resolve-DnsName -Type txt AUTODISCOVER.kakaka.store -Server 9.9.9.9 |FT -AutoSize
 
+# Checking Hotfixes installed
+systeminfo /fo csv | ConvertFrom-Csv | Select OS*, System*, Hotfix* | Format-List
+
+
 
