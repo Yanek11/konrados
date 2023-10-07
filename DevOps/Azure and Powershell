@@ -143,4 +143,25 @@ Resolve-DnsName -Type txt AUTODISCOVER.kakaka.store -Server 9.9.9.9 |FT -AutoSiz
 systeminfo /fo csv | ConvertFrom-Csv | Select OS*, System*, Hotfix* | Format-List
 
 
+# DHCP replication HA
+Invoke-DhcpServerv4FailoverReplication -ComputerName "dc01.ad.kakaka.store" -Name "First relationship"
 
+Get-DhcpServerv4Failover
+get-help
+et-help *dhcp* |where {$_.Name -like "get-*scope*"}
+Get-DhcpServerv4Scopes
+
+Get-DhcpServerv4Lease -ScopeId 1.1.1.0 | where-object {$_.Hostname -like "ese*"}
+
+Enter-PSSession -ComputerName mx.kakaka.store -Credential "backup\adm-kk-backup" -Port 673
+Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value '*.kakaka.store' -Concatenate
+
+# M365 trial
+
+konradkaluszynski@konradk760.onmicrosoft.com
+
+# Exchange - remove / delete from AD
+
+## Unmount the mailbox database
+## Delete the mailbox database
+## Remove the database files
