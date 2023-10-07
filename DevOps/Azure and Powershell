@@ -122,7 +122,7 @@ Get-powershellVirtualDirectory -Server $srv | Set-powershellVirtualDirectory -Ex
 
 
 # checking Exchange services status where StartType Automatic
-get-service | where {$_.status -eq "Stopped" -and $_.Name -like "*exchange*" -and $_.StartType -like "Automatic*"}
+get-service | where {$_.status -eq "Stopped" -and $_.Name -like "msex*" -and $_.StartType -like "Automatic*"}
 
 # Exchange Management Shell - connecting remotely from another machine to Exchange 
 
@@ -191,3 +191,6 @@ Set-MailboxDatabase "Mailbox Database 1209001991" -Name "DB01"
 
 # moving database to another folder - F:\Mailbox Databases
 Move-DatabasePath DB01 -EdbFilePath "F:\Mailbox Databases\DB01.edb" -LogFolderPath "F:\Mailbox Databases\DB01"
+
+# setting MS Exchange services to Automatic Delayed 
+Get-Service | Where-Object {$_.StartupType -eq "Automatic" -and $_.name -like "msexc*"} | set-service  -Startuptype "AutomaticDelayedStart"
