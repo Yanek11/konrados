@@ -106,7 +106,9 @@ Get-WebServicesVirtualDirectory -Server $srv
 Get-WebServicesVirtualDirectory -Server $srv | Set-WebServicesVirtualDirectory -ExternalUrl $null -InternalUrl https://mail.kakaka.store/EWS/Exchange.asmx 
 
 #5 MAPI 
-Get-MapiVirtualDirectory -Server $srv | Set-MapiVirtualDirectory -ExternalUrl $null -InternalUrl https://mail.kakaka.store/mapi
+Get-MapiVirtualDirectory -Server $srv | Set-MapiVirtualDirectory -ExternalUrl https://mail.kakaka.store/mapi -InternalUrl https://mail.kakaka.store/mapi
+
+Get-MapiVirtualDirectory | FL ServerName, *url*, *auth* # checking
 
 #6 ActiveSync
 Get-ActiveSyncVirtualDirectory -Server $srv | Set-ActiveSyncVirtualDirectory -ExternalUrl https://mail.kakaka.store/Microsoft-Server-ActiveSync -InternalUrl https://mail.kakaka.store/Microsoft-Server-ActiveSync
@@ -160,8 +162,21 @@ Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value '*.kakaka.store' -Con
 
 konradkaluszynski@konradk760.onmicrosoft.com
 
-# Exchange - remove / delete from AD
+######### Exchange - remove / delete Exchange server from AD ######### 
+
+### azExch03 could not be uninstalled so I had to remove it manually using https://www.stellarinfo.com/article/remove-failed-exchange-server-from-active-directory.php
 
 ## Unmount the mailbox database
+Get-MailboxDatabase -Server azexch03 |Dismount-Database
+Get-MailboxDatabase -Server azexch03 -Status | ft name,mounted
+Get-MailboxDatabase -Server azexch03 |remove-MailboxDatabase
 ## Delete the mailbox database
+
 ## Remove the database files
+
+# fixing connectivity errors - Microsoft remote Connectivity Analyzer
+## https://terenceluk.blogspot.com/2019/04/running-remote-connectivity-analyzer.html
+# Outlook Anywhere
+Get-OutlookAnywhere | FL Identity,*Host*,*requireSSL*
+
+Set-OutlookAnywhere -Identity:"exch01\Rpc (Default Web Site)" -DefaultAuthenticationMethod NTLM -InternalHostname <internalFQDNURL> -InternalClientsRequireSsl $true -ExternalHostname <externalFQDNURL> -ExternalClientsRequireSsl $true -SSLOffloading $false
