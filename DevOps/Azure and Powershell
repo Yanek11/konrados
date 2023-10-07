@@ -180,3 +180,14 @@ Get-MailboxDatabase -Server azexch03 |remove-MailboxDatabase
 Get-OutlookAnywhere | FL Identity,*Host*,*requireSSL*
 
 Set-OutlookAnywhere -Identity:"exch01\Rpc (Default Web Site)" -DefaultAuthenticationMethod NTLM -InternalHostname <internalFQDNURL> -InternalClientsRequireSsl $true -ExternalHostname <externalFQDNURL> -ExternalClientsRequireSsl $true -SSLOffloading $false
+
+### DAG - installing of second Exchange server ###
+
+# Exch01
+# - renaming existing database to DB01
+
+Get-MailboxDatabase | fl Name,EdbFilePath,LogFolderPath # Mailbox Database 1209001991
+Set-MailboxDatabase "Mailbox Database 1209001991" -Name "DB01"
+
+# moving database to another folder - F:\Mailbox Databases
+Move-DatabasePath DB01 -EdbFilePath "F:\Mailbox Databases\DB01.edb" -LogFolderPath "F:\Mailbox Databases\DB01"
