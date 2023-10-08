@@ -182,6 +182,7 @@ Get-OutlookAnywhere | FL Identity,*Host*,*requireSSL*
 Set-OutlookAnywhere -Identity:"exch01\Rpc (Default Web Site)" -DefaultAuthenticationMethod NTLM -InternalHostname <internalFQDNURL> -InternalClientsRequireSsl $true -ExternalHostname <externalFQDNURL> -ExternalClientsRequireSsl $true -SSLOffloading $false
 
 ### DAG - installing of second Exchange server ###
+# https://www.alitajran.com/create-dag-exchange-server/
 
 # Exch01
 # - renaming existing database to DB01
@@ -193,9 +194,26 @@ Set-MailboxDatabase "Mailbox Database 0663979994" -Name "DB02"
 Move-DatabasePath DB01 -EdbFilePath "F:\Mailbox Databases\DB01.edb" -LogFolderPath "F:\Mailbox Databases\DB01"
 Move-DatabasePath DB02 -EdbFilePath "F:\Mailbox Databases\DB02.edb" -LogFolderPath "F:\Mailbox Databases\DB02"
 
+# checking DAG health
+Test-ReplicationHealth -identity DC01
+Get-ServerComponentState -Identity Exch01
+Get-ServerComponentState -Identity Eset
+Test-ServiceHealth exch01
+Test-ServiceHealth eset
+Get-MailboxDatabaseCopyStatus |ft -AutoSize
 
+# adding second copy of the mailbox database on different Exchange server (ESET)
+Add-MailboxDatabaseCopy -Identity DB01 -MailboxServer ESET -ActivationPreference 2
+##  restart the Microsoft Exchange Information Store service on server ESET after adding new mailbox
+restart-Service -Name "MSExchangeIS" # ESET
+# same for EXCH01
+Add-MailboxDatabaseCopy -Identity DB02 -MailboxServer EXCH01 -ActivationPreference 2
+restart-Service -Name "MSExchangeIS" # EXCH01
 
 # setting MS Exchange services to Automatic Delayed 
 Get-Service | Where-Object {$_.StartupType -eq "Automatic" -and $_.name -like "msexc*"} | set-service  -Startuptype "AutomaticDelayedStart"
-
 Get-Service | Where-Object {$_.StartupType -eq "AutomaticDelayedStart" -and $_.name -like "msexc*"}
+
+# Sending email via Powershell - COOL :)
+$smtp = New-Object Net.Mail.SmtpClient("mx.kakaka.store")
+$smtp.Send("test1@kakaka.store","test2@kakaka.store","Test Email","This is a test")
