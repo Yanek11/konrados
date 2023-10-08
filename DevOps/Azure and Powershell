@@ -187,10 +187,15 @@ Set-OutlookAnywhere -Identity:"exch01\Rpc (Default Web Site)" -DefaultAuthentica
 # - renaming existing database to DB01
 
 Get-MailboxDatabase | fl Name,EdbFilePath,LogFolderPath # Mailbox Database 1209001991
-Set-MailboxDatabase "Mailbox Database 1209001991" -Name "DB01"
+Set-MailboxDatabase "Mailbox Database 0663979994" -Name "DB02"
 
 # moving database to another folder - F:\Mailbox Databases
 Move-DatabasePath DB01 -EdbFilePath "F:\Mailbox Databases\DB01.edb" -LogFolderPath "F:\Mailbox Databases\DB01"
+Move-DatabasePath DB02 -EdbFilePath "F:\Mailbox Databases\DB02.edb" -LogFolderPath "F:\Mailbox Databases\DB02"
+
+
 
 # setting MS Exchange services to Automatic Delayed 
 Get-Service | Where-Object {$_.StartupType -eq "Automatic" -and $_.name -like "msexc*"} | set-service  -Startuptype "AutomaticDelayedStart"
+
+Get-Service | Where-Object {$_.StartupType -eq "AutomaticDelayedStart" -and $_.name -like "msexc*"}
