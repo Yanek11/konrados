@@ -87,7 +87,7 @@ Resolve-DnsName mail.kakaka.store
 # setting new Namespace URLs
 # https://practical365.com/exchange-server-2016-client-access-namespace-configuration/
 
-$srv="EXCH01"
+$srv="azexch05","eset"
 
 #1 OWA - Outlook Web App
 Get-OwaVirtualDirectory -Server $srv |select InternalUrl # checking
@@ -95,7 +95,7 @@ Get-OwaVirtualDirectory -Server $srv | Set-OwaVirtualDirectory -InternalUrl http
 
 #2 Autodiscover
 Get-ClientAccessService |select name, autodiscoverserviceinternaluri
-Set-Clientaccessservice -identity $srv -autodiscoverserviceinternaluri https://mail.kakaka.store/Autodiscover/Autodiscover.xml
+Set-Clientaccessservice -identity $srv -autodiscoverserviceinternaluri https://mail.kakaka.store/Autodiscover/Autodiscover.xml 
 
 #3 ECP - Exchange COntrol Panel
 Get-EcpVirtualDirectory -Server $srv |select InternalUrl, -ExternalUrl
@@ -103,7 +103,7 @@ Get-EcpVirtualDirectory -Server $srv | Set-EcpVirtualDirectory -ExternalUrl $nul
 
 #4 EWS - Exchange Web Services
 Get-WebServicesVirtualDirectory -Server $srv
-Get-WebServicesVirtualDirectory -Server $srv | Set-WebServicesVirtualDirectory -ExternalUrl $null -InternalUrl https://mail.kakaka.store/EWS/Exchange.asmx 
+Get-WebServicesVirtualDirectory -Server $srv | Set-WebServicesVirtualDirectory -ExternalUrl https://mail.kakaka.store/EWS/ -InternalUrl https://mail.kakaka.store/EWS/Exchange.asmx 
 
 #5 MAPI 
 Get-MapiVirtualDirectory -Server $srv | Set-MapiVirtualDirectory -ExternalUrl https://mail.kakaka.store/mapi -InternalUrl https://mail.kakaka.store/mapi
@@ -114,7 +114,7 @@ Get-MapiVirtualDirectory | FL ServerName, *url*, *auth* # checking
 Get-ActiveSyncVirtualDirectory -Server $srv | Set-ActiveSyncVirtualDirectory -ExternalUrl https://mail.kakaka.store/Microsoft-Server-ActiveSync -InternalUrl https://mail.kakaka.store/Microsoft-Server-ActiveSync
 
 #7 OAB - Offline Address Book
-Get-OabVirtualDirectory -Server $srv | Set-OabVirtualDirectory -ExternalUrl $null -InternalUrl https://mail.kakaka.store/OAB
+Get-OabVirtualDirectory -Server $srv | Set-OabVirtualDirectory -ExternalUrl https://mail.kakaka.store/OAB -InternalUrl https://mail.kakaka.store/OAB
 
 #8 Powershell - OPTIONAL ?!
 
@@ -212,14 +212,14 @@ restart-Service -Name "MSExchangeIS" # EXCH01
 
 # setting MS Exchange services to Automatic Delayed 
 Get-Service | Where-Object {$_.StartupType -eq "Automatic" -and $_.name -like "msexc*"} | set-service  -Startuptype "AutomaticDelayedStart"
-Get-Service | Where-Object {$_.StartupType -eq "AutomaticDelayedStart" -and $_.name -like "msexc*"}
+Get-Service | Where-Object {$_.StartupType -eq "AutomaticDelayedStart" -and $_.name -like "msexc*"}| select DisplayName, Status, StartupType
 
 # Sending email via Powershell - COOL :)
 $smtp = New-Object Net.Mail.SmtpClient("mx.kakaka.store")
 $smtp.Send("test1@kakaka.store","test2@kakaka.store","Test Email","This is a test")
 
 ### Failover between Exch01 and ESET / EXCH02
-# EXCH01 goes down
+ # what to do when EXCH01 goes down
 # Proxmox/SMart host - change SMTP relay
 # check ECP / Mailflow / Send connectors / Source server - current active Exchange must be added
 # check active Exchange: ECP/servers/ESET/Outlook Anywhere - external and internal hostname
