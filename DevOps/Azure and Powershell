@@ -195,7 +195,7 @@ Move-DatabasePath DB01 -EdbFilePath "F:\Mailbox Databases\DB01.edb" -LogFolderPa
 Move-DatabasePath DB02 -EdbFilePath "F:\Mailbox Databases\DB02.edb" -LogFolderPath "F:\Mailbox Databases\DB02"
 
 # checking DAG health
-Test-ReplicationHealth -identity DC01
+Test-ReplicationHealth 
 Get-ServerComponentState -Identity Exch01
 Get-ServerComponentState -Identity Eset
 Test-ServiceHealth exch01
@@ -217,3 +217,10 @@ Get-Service | Where-Object {$_.StartupType -eq "AutomaticDelayedStart" -and $_.n
 # Sending email via Powershell - COOL :)
 $smtp = New-Object Net.Mail.SmtpClient("mx.kakaka.store")
 $smtp.Send("test1@kakaka.store","test2@kakaka.store","Test Email","This is a test")
+
+### Failover between Exch01 and ESET / EXCH02
+# EXCH01 goes down
+# Proxmox/SMart host - change SMTP relay
+# check ECP / Mailflow / Send connectors / Source server - current active Exchange must be added
+# check active Exchange: ECP/servers/ESET/Outlook Anywhere - external and internal hostname
+# check SSL binding: if there are multiple binding to the same port like 444 (backend) or 443 (OWA), delete the duplicates, restart IIS/iisreset
