@@ -90,7 +90,7 @@ Resolve-DnsName mail.kakaka.store
 $srv="azexch05","eset"
 
 #1 OWA - Outlook Web App
-Get-OwaVirtualDirectory -Server $srv |select InternalUrl # checking
+Get-OwaVirtualDirectory -Server $azexch05 |select InternalUrl # checking
 Get-OwaVirtualDirectory -Server $srv | Set-OwaVirtualDirectory -InternalUrl https://mail.kakaka.store/owa -ExternalUrl https://mail.kakaka.store/owa
 
 #2 Autodiscover
