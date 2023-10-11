@@ -188,11 +188,12 @@ Set-OutlookAnywhere -Identity:"exch01\Rpc (Default Web Site)" -DefaultAuthentica
 # - renaming existing database to DB01
 
 Get-MailboxDatabase | fl Name,EdbFilePath,LogFolderPath # Mailbox Database 1209001991
-Set-MailboxDatabase "Mailbox Database 0663979994" -Name "DB02"
+Set-MailboxDatabase "Mailbox Database 0171670896" -Name "DB05"
 
 # moving database to another folder - F:\Mailbox Databases
 Move-DatabasePath DB01 -EdbFilePath "F:\Mailbox Databases\DB01.edb" -LogFolderPath "F:\Mailbox Databases\DB01"
 Move-DatabasePath DB02 -EdbFilePath "F:\Mailbox Databases\DB02.edb" -LogFolderPath "F:\Mailbox Databases\DB02"
+Move-DatabasePath DB05 -EdbFilePath "c:\Mailbox Databases\DB05.edb" -LogFolderPath "c:\Mailbox Databases\DB05" # azExch05
 
 # checking DAG health
 Test-ReplicationHealth 
@@ -209,6 +210,26 @@ restart-Service -Name "MSExchangeIS" # ESET
 # same for EXCH01
 Add-MailboxDatabaseCopy -Identity DB02 -MailboxServer EXCH01 -ActivationPreference 2
 restart-Service -Name "MSExchangeIS" # EXCH01
+
+# adding Exchange #3 (azExch05)
+Set-MailboxDatabase "Mailbox Database 0171670896" -Name "DB05"
+Move-DatabasePath DB05 -EdbFilePath "c:\Mailbox Databases\DB05.edb" -LogFolderPath "c:\Mailbox Databases\DB05" # azExch05
+Add-MailboxDatabaseCopy -Identity DB05 -MailboxServer Exch01 -ActivationPreference 2
+Add-MailboxDatabaseCopy -Identity DB05 -MailboxServer ESET -ActivationPreference 2
+##  adding ESET and EXCH01 databases on azEXCH 
+## execute on EXCH01
+Add-MailboxDatabaseCopy -Identity DB01 -MailboxServer azExch05 -ActivationPreference 2
+Add-MailboxDatabaseCopy -Identity DB02 -MailboxServer azExch05 -ActivationPreference 2
+
+Add-MailboxDatabaseCopy -Identity DB05 -MailboxServer ESET -ActivationPreference 2
+
+### removing database copies on azExch05
+## https://www.alitajran.com/mailbox-server-cannot-be-removed-from-dag/
+Remove-MailboxDatabaseCopy -Identity "DB05\Exch01" -Confirm:$false
+Remove-MailboxDatabaseCopy -Identity "DB01\azexch05" -Confirm:$false
+Add-MailboxDatabaseCopy -Identity DB02 -MailboxServer azExch05 -ActivationPreference 2
+
+Add-MailboxDatabaseCopy -Identity DB05 -MailboxServer ESET -ActivationPreference 2
 
 # setting MS Exchange services to Automatic Delayed 
 Get-Service | Where-Object {$_.StartupType -eq "Automatic" -and $_.name -like "msexc*"} | set-service  -Startuptype "AutomaticDelayedStart"
