@@ -254,3 +254,25 @@ $smtp.Send("test1@kakaka.store","test2@kakaka.store","Test Email","This is a tes
 # check SSL binding: if there are multiple binding to the same port like 444 (backend) or 443 (OWA), delete the duplicates, restart IIS/iisreset
 
 # Disk operations - resize, delete
+# VMware
+##free space check
+df -h  /vmfs/volumes/datastore1/
+## folder usage 
+du -h  /vmfs/volumes/datastore1/
+
+# BreakIT VM disks
+# Target /vmfs/volumes/Backup\ datastore/Disks/BreakIT/
+
+# Source
+/vmfs/volumes/datastore1/TEST2/
+/vmfs/volumes/datastore1/SRV-TEST-02/
+
+## FILES
+/vmfs/volumes/datastore1/TEST2/W2016-1.vmdk 
+/vmfs/volumes/datastore1/TEST2/W2016-1-flat.vmdk
+
+/vmfs/volumes/datastore1/SRV-TEST-02/SRV-TEST-02.vmdk
+
+vmkfstools --clonevirtualdisk "/vmfs/volumes/datastore1/TEST2/W2016-1.vmdk" --diskformat thin "/vmfs/volumes/Backup\ datastore/Disks/BreakIT/W2016-1-thin.vmdk" 
+
+vmkfstools -i "/vmfs/volumes/datastore1/SRV-TEST-02/SRV-TEST-02.vmdk" -d thick "/vmfs/volumes/Backup\ datastore/Disks/BreakIT/SRV-TEST-02.vmdk"
