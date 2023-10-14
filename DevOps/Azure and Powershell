@@ -276,3 +276,13 @@ du -h  /vmfs/volumes/datastore1/
 vmkfstools --clonevirtualdisk "/vmfs/volumes/datastore1/TEST2/W2016-1.vmdk" --diskformat thin "/vmfs/volumes/Backup\ datastore/Disks/BreakIT/W2016-1-thin.vmdk" 
 
 vmkfstools -i "/vmfs/volumes/datastore1/SRV-TEST-02/SRV-TEST-02.vmdk" -d thick "/vmfs/volumes/Backup\ datastore/Disks/BreakIT/SRV-TEST-02.vmdk"
+
+# killing unresponsive VM via ESXI cmd
+https://kb.vmware.com/s/article/1014165#steps_using_esxi_esxcli_command_to_power_off_virtual_machine
+## getting world ID 
+esxcli vm process list # 2101825
+## kill
+esxcli vm process kill --type= [soft,hard,force] --world-id= WorldNumber
+esxcli vm process kill --type=soft --world-id=2101825
+vim-cmd vmsvc/power.off 17
+
