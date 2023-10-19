@@ -3,12 +3,12 @@
 # changing VM DNS must be done from AZ Powershell not locally 
 # adding  DNS server via AZ Powershell
 
-Get-AzNetworkInterface
-$nic = Get-AzNetworkInterface -ResourceGroupName "RG1" -Name "azexch033"
-$nic.DnsSettings.DnsServers.add("1.1.1.15")
+    Get-AzNetworkInterface
+    $nic = Get-AzNetworkInterface -ResourceGroupName "RG1" -Name "azexch033"
+    $nic.DnsSettings.DnsServers.add("1.1.1.15")
 ## Azure DNS 168.63.129.16  
-$nic.DnsSettings.DnsServers.add("168.63.129.16")
-$nic | Set-AzNetworkInterface
+    $nic.DnsSettings.DnsServers.add("168.63.129.16")
+    $nic | Set-AzNetworkInterface
 
 
 # checking if change OK
@@ -71,11 +71,13 @@ Get-WmiObject -Class Win32_Product | where-object name -like *Exchange* | select
 ./setup.exe /mode:uninstall /IAcceptExchangeServerLicenseTerms_DiagnosticDataON 
 
 ## installing features
-Install-WindowsFeature RSAT-Clustering-CmdInterface, NET-Framework-45-Features, RPC-over-HTTP-proxy, RSAT-Clustering, RSAT-Clustering-CmdInterface, RSAT-Clustering-Mgmt, RSAT-Clustering-PowerShell, Web-Mgmt-Console, WAS-Process-Model, Web-Asp-Net45, Web-Basic-Auth, Web-Client-Auth, Web-Digest-Auth, Web-Dir-Browsing, Web-Dyn-Compression, Web-Http-Errors, Web-Http-Logging, Web-Http-Redirect, Web-Http-Tracing, Web-ISAPI-Ext, Web-ISAPI-Filter, Web-Lgcy-Mgmt-Console, Web-Metabase, Web-Mgmt-Console, Web-Mgmt-Service, Web-Net-Ext45, Web-Request-Monitor, Web-Server, Web-Stat-Compression, Web-Static-Content, Web-Windows-Auth, Web-WMI, Windows-Identity-Foundation, RSAT-ADDS
+    Install-WindowsFeature RSAT-Clustering-CmdInterface, NET-Framework-45-Features, RPC-over-HTTP-proxy, RSAT-Clustering, RSAT-Clustering-CmdInterface, RSAT-Clustering-Mgmt, RSAT-Clustering-PowerShell, Web-Mgmt-Console, WAS-Process-Model, Web-Asp-Net45, Web-Basic-Auth, Web-Client-Auth, Web-Digest-Auth, Web-Dir-Browsing, Web-Dyn-Compression, Web-Http-Errors, Web-Http-Logging, Web-Http-Redirect, Web-Http-Tracing, Web-ISAPI-Ext, Web-ISAPI-Filter, Web-Lgcy-Mgmt-Console, Web-Metabase, Web-Mgmt-Console, Web-Mgmt-Service, Web-Net-Ext45, Web-Request-Monitor, Web-Server, Web-Stat-Compression, Web-Static-Content, Web-Windows-Auth, Web-WMI, Windows-Identity-Foundation, RSAT-ADDS
 
-.\Setup.exe /mode:Install /role:Mailbox /OrganizationName:"First Organization"  /IAcceptExchangeServerLicenseTerms_DiagnosticDataOFF 
+    .\Setup.exe /mode:Install /role:Mailbox /OrganizationName:"First Organization"  /IAcceptExchangeServerLicenseTerms_DiagnosticDataOFF 
 
-### NEW EXCHANGE 2016 INSTALLATION ###
+
+
+    ### NEW EXCHANGE 2016 INSTALLATION ###
 # adding pin point DNS - 1.1.1.16 
 mail.kakaka.store
 autodiscover.kakaka.store
@@ -98,10 +100,11 @@ Set-Clientaccessservice -identity $srv -autodiscoverserviceinternaluri https://m
 Get-ClientAccessService |select name, autodiscoverserviceinternaluri
 
 #3 ECP - Exchange COntrol Panel
-Get-EcpVirtualDirectory -Server $srv | Set-EcpVirtualDirectory -ExternalUrl $null -InternalUrl https://mail.kakaka.store/ecp
-Get-EcpVirtualDirectory -Server $srv |select InternalUrl, -ExternalUrl
+    Get-EcpVirtualDirectory -Server $srv | Set-EcpVirtualDirectory -ExternalUrl $null -InternalUrl https://mail.kakaka.store/ecp
+    Get-EcpVirtualDirectory -Server $srv |select InternalUrl, -ExternalUrl
+
 #4 EWS - Exchange Web Services
-Get-WebServicesVirtualDirectory -Server $srv | Set-WebServicesVirtualDirectory -ExternalUrl https://mail.kakaka.store/EWS/ -InternalUrl https://mail.kakaka.store/EWS/Exchange.asmx 
+Get-WebServicesVirtualDirectory -Server $srv | Set-WebServicesVirtualDirectory -ExternalUrl https://mail.kakaka.store/EWS/Exchange.asmx  -InternalUrl https://mail.kakaka.store/EWS/Exchange.asmx 
 Get-WebServicesVirtualDirectory -Server $srv
 
 #5 MAPI 
@@ -127,37 +130,45 @@ get-service | where {$_.status -eq "Stopped" -and $_.Name -like "msex*" -and $_.
 
 # Exchange Management Shell - connecting remotely from another machine to Exchange 
 
-Set-ExecutionPolicy RemoteSigned
-$UserCredential = Get-Credential
-$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://exch01.ad.kakaka.store/powershell -Authentication Kerberos -Credential $UserCredential
-Import-PSSession $Session -DisableNameChecking -AllowClobber
+    Set-ExecutionPolicy RemoteSigned
+    $UserCredential = Get-Credential
+    $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://exch01.ad.kakaka.store/powershell -Authentication Kerberos -Credential $UserCredential
+    Import-PSSession $Session -DisableNameChecking -AllowClobber
 
 # Exchange Health check
-Get-ServerHealth -identity azexch03 |where-object {$_.alertvalue -eq "unHealthy"}
+Get-ServerHealth -identity $srv |where-object {$_.alertvalue -eq "unHealthy"}
 # checking MAPI connectivity
 Get-MailboxDatabase | Test-MAPIConnectivity
 
-# dns
+# DNS
+https://www.howto-outlook.com/howto/autodiscoverconfiguration.htm
+## adding autodiscover -external DNS
+    Name: autodiscover
+    TTL: 3600
+    RR Type: CNAME
+    Value: mail.kakaka.Store
 Resolve-DnsName -Type mx kakaka.store -Server 9.9.9.9 |FT -AutoSize
 Resolve-DnsName -Type A MX.kakaka.store -Server 9.9.9.9 |FT -AutoSize
 Resolve-DnsName -Type txt AUTODISCOVER.kakaka.store -Server 9.9.9.9 |FT -AutoSize
+
+# SSL certificate creation - Zero SSL
 
 # Checking Hotfixes installed
 systeminfo /fo csv | ConvertFrom-Csv | Select OS*, System*, Hotfix* | Format-List
 
 
 # DHCP replication HA
-Invoke-DhcpServerv4FailoverReplication -ComputerName "dc01.ad.kakaka.store" -Name "First relationship"
+    Invoke-DhcpServerv4FailoverReplication -ComputerName "dc01.ad.kakaka.store" -Name "First relationship"
 
-Get-DhcpServerv4Failover
-get-help
-et-help *dhcp* |where {$_.Name -like "get-*scope*"}
-Get-DhcpServerv4Scopes
+    Get-DhcpServerv4Failover
+    get-help
+    et-help *dhcp* |where {$_.Name -like "get-*scope*"}
+    Get-DhcpServerv4Scopes
 
-Get-DhcpServerv4Lease -ScopeId 1.1.1.0 | where-object {$_.Hostname -like "ese*"}
+    Get-DhcpServerv4Lease -ScopeId 1.1.1.0 | where-object {$_.Hostname -like "ese*"}
 
-Enter-PSSession -ComputerName mx.kakaka.store -Credential "backup\adm-kk-backup" -Port 673
-Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value '*.kakaka.store' -Concatenate
+    Enter-PSSession -ComputerName mx.kakaka.store -Credential "backup\adm-kk-backup" -Port 673
+    Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value '*.kakaka.store' -Concatenate
 
 # M365 trial
 
@@ -286,4 +297,17 @@ esxcli vm process list # 2101825
 esxcli vm process kill --type= [soft,hard,force] --world-id= WorldNumber
 esxcli vm process kill --type=soft --world-id=2101825
 vim-cmd vmsvc/power.off 17
+vim-cmd vmsvc/getallvms
 
+
+# Outlook / Exchange # commands
+## checking Outlook clients connected to Exchange
+Get-LogonStatistics -server  SRV-19-EXCH01.ad.kakaka.store | Where-Object { $_.ApplicationId -like "Outlook" } | Select-Object UserName, ApplicationId, ClientVersion, LastAccessTime # not working on 2019
+## checking queue - EMS
+get-queue
+
+# changing Send conenctor port on Exchange - EMS
+get-sendconnector
+set-sendconnector -identity "Proxmox" -port 26
+get-sendconnector "Proxmox" |fl port
+get-service | Where-Object {$_.Name -eq "MSExchangeTransport" } |Restart-Service
