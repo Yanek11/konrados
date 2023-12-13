@@ -22,7 +22,7 @@ get-OutlookAnywhere | select server,ExternalHostname, InternalHostname
 https://mail.kakaka.store
 
 setting
-get-outlookanywhere | set-OutlookAnywhere -ExternalHostname mail.kakaka.store -InternalHostname mail.kakaka.store -ExternalClientRequireSSL $true -InternalClientRequireSSL $true -DefaultAuthenticationMethod NTLM
+get-outlookanywhere | set-OutlookAnywhere -ExternalHostname mail.kakaka.store -InternalHostname mail.kakaka.store -ExternalClientsRequireSSL $true -InternalClientsRequireSSL $true -DefaultAuthenticationMethod NTLM
 
 MAPI
 
