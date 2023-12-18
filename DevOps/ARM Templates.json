@@ -1,0 +1,89 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+       
+        "disks_vm1_disk1_2527db8e36f142da8d0085076fe928d2_externalid": {
+            "defaultValue": "/subscriptions/90b52d04-b71b-4c84-9557-fd0cbf978107/resourceGroups/rg1/providers/Microsoft.Compute/disks/vm1_disk1_2527db8e36f142da8d0085076fe928d2",
+            "type": "String"
+        },
+        "networkInterfaces_vm1VMNic_externalid": {
+            "defaultValue": "/subscriptions/90b52d04-b71b-4c84-9557-fd0cbf978107/resourceGroups/rg1/providers/Microsoft.Network/networkInterfaces/vm1VMNic",
+            "type": "String"
+        }
+    },
+    "variables": {
+		 "vmName": "[concat(replace(toLower(resourceGroup().name),'-',''), 'vmlin')]"
+	},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2023-03-01",
+             "name": "[variables('vmName')]",
+          "location": "[parameters('location')]",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Debian",
+                        "offer": "debian-11",
+                        "sku": "11-backports-gen2",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(parameters('virtualMachines_vm1_name'), '_disk1_2527db8e36f142da8d0085076fe928d2')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "id": "[parameters('disks_vm1_disk1_2527db8e36f142da8d0085076fe928d2_externalid')]"
+                        },
+                        "deleteOption": "Detach"
+                    },
+                    "dataDisks": [],
+                    "diskControllerType": "SCSI"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_vm1_name')]",
+                    "adminUsername": "izabella",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "/home/izabella/.ssh/authorized_keys",
+                                    "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCfNGx7a3HFWcviYbqE4Lj04oaj7qh4a/TbATSGIIm/L8zGpsxoFlAUnvaqi7yPNY09U+iBxiqxEpCWI3vLHSvr6tINW0CRShbIIibekMAvYKQ1skw1ZL4uEDrgzTJxUV12mQjqgKchHfmkCOw4bInk2l9njR95il1iXJmPyv39aj80+xxoUbvt8rEauenHtxGYGyvYvaVrw5GkWrUqIm973QersE8LoWZUJmfyWpQdIdYmvzzDUxdclahOkecN2yk/FIK1GDk82ShEY8VCl3MYNtHpQTuBQFt11q3zadGIY2rZXUqMgHrPGXtPYR4cBZp9wMOasF5GGvbvPBj8po6f"
+                                }
+                            ]
+                        },
+                        "provisionVMAgent": true,
+                        "patchSettings": {
+                            "patchMode": "ImageDefault",
+                            "assessmentMode": "ImageDefault"
+                        },
+                        "enableVMAgentPlatformUpdates": false
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "securityProfile": {
+                    "uefiSettings": {
+                        "secureBootEnabled": true,
+                        "vTpmEnabled": true
+                    },
+                    "securityType": "TrustedLaunch"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[parameters('networkInterfaces_vm1VMNic_externalid')]"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
