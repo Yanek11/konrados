@@ -5,7 +5,7 @@
     {
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2021-09-01",
-      "name": "[concat(replace(toLower(resourceGroup().name),'-',''), 'stdsa')]"
+      "name": "[concat(replace(toLower(resourceGroup().name),'-',''), 'stdsa')]",
       "location": "polandcentral",
       "sku": {
         "name": "Standard_LRS"
