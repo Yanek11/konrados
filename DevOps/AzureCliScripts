@@ -1,5 +1,1 @@
-$templateFile = "{provide-the-path-to-the-template-file}"
-New-AzResourceGroupDeployment `
-  -Name blanktemplate `
-  -ResourceGroupName myResourceGroup `
-  -TemplateFile $templateFile
+az deployment group create --name ExampleDeployment --resource-group  testRG --template-uri "https://raw.githubusercontent.com/Yanek11/devops/main/azuredeploy1.json" 
