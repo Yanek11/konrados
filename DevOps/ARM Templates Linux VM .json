@@ -12,7 +12,7 @@
   "parameters": {
     "vmName": {
       "type": "string",
-      "defaultValue": "simpleLinuxVM",
+      "defaultValue": "VMLinux",
       "metadata": {
         "description": "The name of your Virtual Machine."
       }
