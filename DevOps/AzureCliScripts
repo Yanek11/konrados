@@ -1,1 +1,2 @@
 
+az deployment group create --name ExampleDeployment --resource-group  testRG --template-uri "https://github.com/Yanek11/devops/edit/main/azuredeploy1.json" --parameters storageAccountType=Standard_GRS
