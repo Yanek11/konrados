@@ -1,1 +1,12 @@
-az deployment group create --name addstorage --resource-group  testRG --template-uri "https://raw.githubusercontent.com/Yanek11/devops/main/azuredeploy1.json" 
+
+az deployment group create --name addstorage --resource-group  testRG --template-uri "https://raw.githubusercontent.com/Yanek11/konrados/main/DevOps/azuredeploy.json" 
+
+# listing deployments
+az deployment group list -g testRG -o table
+
+# deleting az storage account
+az storage account delete --ids $(az storage account list  --query "[?contains(name,'testrgstdsa')]")
+
+# counting lines with stdsa
+# so you can count how many accounts has such a name 
+az storage account list -o jsonc | grep '"name":'| grep 'std'|wc -l
