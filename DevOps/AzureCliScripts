@@ -13,3 +13,6 @@ az storage account list -o jsonc | grep '"name":'| grep 'std'|wc -l
 
 # adding parameters (name) to deployment
 az deployment group create --name addnameparameter --resource-group testRG --template-uri "https://raw.githubusercontent.com/Yanek11/konrados/main/DevOps/azuredeploy.json" --parameters storageName="kktest1stdsa1"
+
+# adding parameters (SKU storage) to deployment
+
