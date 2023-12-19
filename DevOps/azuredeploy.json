@@ -2,7 +2,7 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters":{
-    "storagename": {
+    "storageName": {
       "type":"string",
       "minLength": 3,
       "maxLength": 24
@@ -13,7 +13,7 @@
     {
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2021-09-01",
-      "name": "[parameters('storagename')]",
+      "name": "[parameters('storageName')]",
       "location": "polandcentral",
       "sku": {
         "name": "Standard_LRS"

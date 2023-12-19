@@ -10,3 +10,7 @@ az storage account delete --ids $(az storage account list  --query "[?contains(n
 # counting lines with stdsa
 # so you can count how many accounts has such a name 
 az storage account list -o jsonc | grep '"name":'| grep 'std'|wc -l
+
+# adding parameters to deployment
+az deployment group create --name addnameparameter --resource-group testRG --template-uri "https://raw.githubusercontent.com/Yanek11/konrados/main/DevOps/azuredeploy.json"
+--parameters storageName=
