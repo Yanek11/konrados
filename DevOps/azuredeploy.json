@@ -21,14 +21,19 @@
         "Standard_GZRS",
         "Standard_RAGZRS"
       ]
+    },
+    "location": {
+      "type":"string",
+      "defaultValue": "[resoourceGroup('location')"
     }
+    
   },
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2021-09-01",
       "name": "[parameters('storageName')]",
-      "location": "polandcentral",
+      "location": "[parameters('location')]",
       "sku": {
         "name": "[parameters('storageSKU')]"
       },
@@ -36,6 +41,8 @@
       "properties": {
         "supportsHttpsTrafficOnly": true
       }
+    
+
     }
   ]
 }
