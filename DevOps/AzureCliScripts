@@ -22,3 +22,18 @@ az deployment group create --name addskuparameter --resource-group testRG --temp
 
 # adding template functions
 az deployment group create --name addlocationparameter --resource-group testRG --template-uri "https://raw.githubusercontent.com/Yanek11/konrados/main/DevOps/azuredeploy.json" --parameters storageName="kktest3sku"
+
+# deleting deployment group
+az deployment group delete  --name addskuparameter --resource-group testRG 
+
+# deleting stotrage account
+az storage account delete --name "kktest3sku" -g "testRG"
+
+# creating group and storage account with Standard_LRS
+az deployment group create --name addskuparameter --resource-group testRG --template-uri "https://raw.githubusercontent.com/Yanek11/konrados/main/DevOps/azuredeploy.json" --parameters storageName="kktest3sku"
+
+# listing resources in resource group
+az resource list -o table | grep testRG
+
+# deleting resources (storage account) within a resource group
+az storage account delete --ids $(az resource list --resource-group testRG)
