@@ -6,13 +6,6 @@
       "type":"string",
       "minLength": 3,
       "maxLength": 11
-
-    },
-    "storageName": {
-      "type":"string",
-      "minLength": 3,
-      "maxLength": 24
-
     },
     "storageSKU": {
       "type": "string",
