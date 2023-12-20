@@ -21,4 +21,4 @@ az deployment group create --name addskuparameter --resource-group testRG --temp
 az deployment group create --name addskuparameter --resource-group testRG --template-uri "https://raw.githubusercontent.com/Yanek11/konrados/main/DevOps/azuredeploy.json" --parameters storageName="kktest3sku" --parameters storageSKU="Standard_GRS"
 
 # adding template functions
-
+az deployment group create --name addlocationparameter --resource-group testRG --template-uri "https://raw.githubusercontent.com/Yanek11/konrados/main/DevOps/azuredeploy.json" --parameters storageName="kktest3sku"
