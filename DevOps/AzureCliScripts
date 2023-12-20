@@ -39,4 +39,4 @@ az resource list -o table | grep testRG
 az storage account delete --ids $(az resource list --resource-group testRG)
 
 # creating group and storage account with unique name based on variable/hash
-az deployment group create --name addvariable --resource-group testRG --template-uri "https://raw.githubusercontent.com/Yanek11/konrados/main/DevOps/azuredeploy.json" --parameters storagePrefix="konrados_storage"
+az deployment group create --name addvariable --resource-group testRG --template-uri "https://raw.githubusercontent.com/Yanek11/konrados/main/DevOps/azuredeploy.json" --parameters storagePrefix="stokonrado"
