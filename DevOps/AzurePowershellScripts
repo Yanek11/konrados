@@ -1,0 +1,8 @@
+# moving VM from one subnet to another
+#1 - Azure Portal
+
+#2 - Azure PS
+
+#3 - Azure CLI
+ 
+Get-AzVM -ResourceGroupName rg_second  
