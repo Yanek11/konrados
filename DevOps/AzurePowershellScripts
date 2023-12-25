@@ -2,7 +2,8 @@
 #1 - Azure Portal
 
 #2 - Azure PS
+Get-AzVM -ResourceGroupName rg_second  
 
 #3 - Azure CLI
- 
-Get-AzVM -ResourceGroupName rg_second  
+
+
