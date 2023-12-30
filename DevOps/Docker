@@ -1,1 +1,15 @@
 
+# adding user to a docker group
+sudo usermod -aG docker $USER
+docker image list
+docker image pull ubuntu
+docker image inspect ubuntu
+
+docker run --name ubuntu -dit --memory=256m --cpus="2" ubuntu bash
+
+dockid=$(docker ps -a -q --filter name="ubuntu")
+dockerlongid=$(docker ps -a -q --no-trunc --filter name="ubuntu")
+
+/sys/fs/cgroup/unified/docker/cgroup.controllers
+/sys/fs/cgroup/unified/cgroup.controllers
+
