@@ -23,6 +23,26 @@ cat /proc/$$/cgroup
 # control group 
 cat /proc/$dockerPSID/cgroup
 
+#cgroup of the process WITHIN the container that has a parent of the runc instance
+containerbash=$(ps -eF |grep -v grep | grep bash | grep $dockerPSID | awk '{print $2}')
+cat /proc/$containerbash/cgroup
+
+
+### cutting id of a parent process 4553. child process is 4573
+
+#1 showing both processes
+ps -eF | grep  -v grep | grep 4573 -B 1
+
+# result
+# root        4553       1  0 180018 19504  1 12:12 ?        00:00:01 /usr/bin/containerd-shim-runc-v2 -namespace moby -id 4f62aa8557e8ff9c6ae8c9d66a769b5a1115a621f1c45e016cd38e5396d6a652 -address /run/containerd/containerd.sock
+# root        4573    4553  0  1156  3456   0 12:12 pts/0    00:00:00 bash
+
+#2 cutting ID of a parent process
+ps -eF | grep  -v grep | grep 4573 | cut -d' ' -f 13
+# result
+# 4553
+
+
 cat /sys/fs/cgroup/cgroup.controllers
 cat /sys/fs/cgroup/cgroup.subtree_control
 
