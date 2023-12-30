@@ -2,13 +2,32 @@
 # adding user to a docker group
 sudo usermod -aG docker $USER
 docker image list
+# download install image
 docker image pull ubuntu
 docker image inspect ubuntu
 
+# start the container
 docker run --name ubuntu -dit --memory=256m --cpus="2" ubuntu bash
 
 dockid=$(docker ps -a -q --filter name="ubuntu")
 dockerlongid=$(docker ps -a -q --no-trunc --filter name="ubuntu")
+dockerPSID=$(ps aux |grep -v grep| grep $dockid | awk '{print $2}')
+
+sudo du -hc --max-depth=1 /var/lib/docker/containers
+
+sudo ls -l  /var/lib/docker/containers/$dockerlongid
+sudo cat  /var/lib/docker/containers/$dockerlongid/config.v2.json
+
+# scope of the "cgroup"
+cat /proc/$$/cgroup    
+# control group 
+cat /proc/$dockerPSID/cgroup
+
+cat /sys/fs/cgroup/cgroup.controllers
+cat /sys/fs/cgroup/cgroup.subtree_control
+
+
+
 
 /sys/fs/cgroup/unified/docker/cgroup.controllers
 /sys/fs/cgroup/unified/cgroup.controllers
