@@ -37,18 +37,39 @@ ps -eF | grep  -v grep | grep 4573 -B 1
 # root        4553       1  0 180018 19504  1 12:12 ?        00:00:01 /usr/bin/containerd-shim-runc-v2 -namespace moby -id 4f62aa8557e8ff9c6ae8c9d66a769b5a1115a621f1c45e016cd38e5396d6a652 -address /run/containerd/containerd.sock
 # root        4573    4553  0  1156  3456   0 12:12 pts/0    00:00:00 bash
 
-#2 cutting ID of a parent process
+#2 cutting ID of a parent process, value 4553 located at 13 character position (-f 13), space (-d' ') is a delimiter   
 ps -eF | grep  -v grep | grep 4573 | cut -d' ' -f 13
 # result
 # 4553
 
+# viewing the cgroup
+ls /sys/fs/cgroup/system.slice
+
+# processes in the containerd cgroup
+ cat /sys/fs/cgroup/system.slice/containerd.service/cgroup.procs
+
+# my container cgroup
+ ls /sys/fs/cgroup/system.slice/docker-$dockerlongid.scope/
+
+# viewwing cgroup  ID for my bash process 
+ cat /sys/fs/cgroup/system.slice/docker-$dockerlongid.scope/cgroup.procs
+
+# limits created when I started the container
+ cat /sys/fs/cgroup/system.slice/docker-$dockerlongid.scope/memory.max
+ cat /sys/fs/cgroup/system.slice/docker-$dockerlongid.scope/cpu.max
+
+# displaying cgroups 
+lscgroup
 
 cat /sys/fs/cgroup/cgroup.controllers
 cat /sys/fs/cgroup/cgroup.subtree_control
 
+# checking processes in the container
+docker exec ubuntu ps -eF
 
-
-
-/sys/fs/cgroup/unified/docker/cgroup.controllers
-/sys/fs/cgroup/unified/cgroup.controllers
+# starting the process
+docker exec ubuntu sh -c "for i in $(seq 1); do yes > /dev/null & done"
+ps -eF # it is showing on host
+docker exec ubuntu ps -eF # it showing in container too
+docker exec ubuntu kill 
 
