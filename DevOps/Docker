@@ -1,13 +1,18 @@
 
 # adding user to a docker group
 sudo usermod -aG docker $USER
+
+docker --version
+docker system info
 docker image list
-# download install image
-docker image pull ubuntu
-docker image inspect ubuntu
+
+
+# region download install image
+ docker image pull ubuntu
+ docker image inspect ubuntu
 
 # start the container
-docker run --name ubuntu -dit --memory=256m --cpus="2" ubuntu bash
+ docker run --name ubuntu -dit --memory=256m --cpus="2" ubuntu bash
 
 dockid=$(docker ps -a -q --filter name="ubuntu")
 dockerlongid=$(docker ps -a -q --no-trunc --filter name="ubuntu")
@@ -41,6 +46,8 @@ ps -eF | grep  -v grep | grep 4573 -B 1
 ps -eF | grep  -v grep | grep 4573 | cut -d' ' -f 13
 # result
 # 4553
+
+cat /proc/$containerbash/cgroup
 
 # viewing the cgroup
 ls /sys/fs/cgroup/system.slice
