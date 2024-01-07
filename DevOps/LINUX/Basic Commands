@@ -1,0 +1,39 @@
+
+
+# replace mysql with MYSQL and copy to a new file
+sed s/mysql/MYSQL/g snort.conf.copy > snort.conf.copy2
+
+# searching for '$Work' string and showing 5 lines before/above, not showing line containing '$Work', showing line numbers as well
+nl /etc/rsyslog.conf |grep '$Work' -B 5 | grep -v '$Work'
+
+# searching for sources.list list and removing it, starting with root
+find /var/lib/apt/sources.list -type f -exec rm {} \;
+
+#
+find /var/lib/apt/sources.list -type f -exec rm {} \;
+
+CWD="$(pwd)"
+
+# finding files with json and conf extensions, using logical -or, line numbers included
+ sudo find /etc -name *.json -o -name *.conf | nl
+ sudo find /etc -name java* -type f  -o -type d -name *java* |nl > nginx.file3
+
+# showing only words from a first column (-f1) and delimiter is comma (-d:). results are numbered
+
+# CUT command
+ sudo cat /etc/passwd |cut -d: -f1 |nl
+
+# GREP command 
+# (^) - start of each line
+# ([^:]*) - no colons
+ sudo cat /etc/passwd |grep -o '^[^:]*' |nl
+
+# AWK command
+ sudo cat /etc/passwd |awk -F ':' '{print $1}'|nl
+
+# excluding errors ( 2>/dev/null )
+    find /etc 2>/dev/null -type f -size +500k
+
+# showing size of a file, using cut
+path=/path/to/file
+sudo ls -lash $path | cut -d' ' -f1
