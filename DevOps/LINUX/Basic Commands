@@ -37,3 +37,48 @@ CWD="$(pwd)"
 # showing size of a file, using cut
 path=/path/to/file
 sudo ls -lash $path | cut -d' ' -f1
+
+# deleting files larger than 1K
+ find . -type f -size +1k -exec rm -f {} \;
+
+# SED and AWK
+
+# (-e) is necessary if multiple instructions are supplied on command line 
+sed 's/ MA/ , Massachusetts/; s/ PA/, Pennsylvania' email.list
+sed -e 's/ MA/ , Massachusetts/' -e 's/ PA/ , Pennsylvania/' email.list
+
+# replacing " ," with ", "
+# converting (,Massachusetts) to (, Massachusetts)
+
+sed "s/ ,/, /" email.list2
+sed -e "s/ ,/, /" email.list2
+
+# removing space from first column
+sed -e "s/^ *//" email.list
+
+# using scripts
+sed -f sedscr file
+# 'file' that is changed
+# 'sedscr' file containing commands for the script
+cat sedscr
+s/ MA/, Massachusetts/
+s/ PA/, Pennsylvania/
+s/ CA/, California/
+s/ VA/, Virginia/
+s/ OK/, Oklahoma/
+
+# example
+sed -f sedscr email.list
+# capturing changes in a newfile
+sed -f sedscr email.list > email.list.new
+
+# prints first field from the output
+ awk '{print $1}' email.list
+
+# printing multiple columns
+awk '{print $3" "$4" "$5}' email.list
+
+# selecting based on value
+awk '/VA/' email.list
+
+
