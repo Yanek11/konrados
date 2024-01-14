@@ -116,3 +116,45 @@ PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
 
 
 cat top.list | grep -E PID -A 10000 | awk '{if($9>0)print $1" "$2" "$9" "$10" "$12}'|more
+
+# selecting processes that have uptime more than 0, printing all colums '$0'
+ps -ax | grep -E PID -A 100 | awk '{if($4 != "0:00")print $0}'
+
+
+# nameState
+s/ CA/, California/
+s/ MA/, Massachusetts/
+s/ OK/, Oklahoma/
+s/ PA/, Pennsylvania/
+s/ VA/, Virginia/
+
+# email.list.new
+John Daggett, 341 King Road, Plymouth, Massachusetts
+Alice Ford, 22 East Broadway, Richmond, Virginia
+Orville Thomas, 11345 Oak Bridge Road, Tulsa, Oklahoma
+Terry Kalkas, 402 Lans Road, Beaver Falls, Pennsylvania
+Eric Adams, 20 Post Road, Sudbury, Massachusetts
+Hubert Sims, 328A Brook Road, Roanoke, Virginia
+Amy Wilde, 334 Bayshore Pkwy, Mountain View, California
+Sal Carpenter, 73 6th Street, Boston, Massachusetts
+
+# printing only 4th column
+sed -f nameState email.list.new | awk -F, '{print $4}'
+
+# counting occurences of each state, sorting states alphabetically 
+sed -f nameState email.list.new | awk -F, '{print $4}' |sort | uniq -c
+
+
+# sorting names of people by state and printing state name and names after
+
+### shell script 'byState'
+#! /bin/sh
+awk -F, ’{ print $4 ", " $0}’ $* |\n
+sort |\n
+awk -F, ’$1 == LastState {print "\t" $2} $1 != LastState {LastState = $1 print $1 print "\t" $2}’\n
+echo '#! /bin/sh\n
+awk -F, ’{ print $4 ", " $0}’ $* |\n
+sort |\n
+awk -F, ’$1 == LastState {print "\t" $2} $1 != LastState {LastState = $1 print $1 print "\t" $2}’'\n
+
+
