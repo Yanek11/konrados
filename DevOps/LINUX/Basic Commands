@@ -149,12 +149,46 @@ sed -f nameState email.list.new | awk -F, '{print $4}' |sort | uniq -c
 
 ### shell script 'byState'
 #! /bin/sh
-awk -F, ’{ print $4 ", " $0}’ $* |\n
-sort |\n
-awk -F, ’$1 == LastState {print "\t" $2} $1 != LastState {LastState = $1 print $1 print "\t" $2}’\n
-echo '#! /bin/sh\n
-awk -F, ’{ print $4 ", " $0}’ $* |\n
-sort |\n
-awk -F, ’$1 == LastState {print "\t" $2} $1 != LastState {LastState = $1 print $1 print "\t" $2}’'\n
+awk -F, '{ print $4 ", " $0}' $* |
+sort |
+awk -F, '$1 == LastState {print "\t" $2} $1 != LastState {LastState = $1 print $1 print "\t" $2}'
+
+cat gcutError_recon-all.log | grep Subject[0-90-9] | sort | uniq -c | tail
+
+# showing pattern along with line numbers
+cat gcutError_recon-all.log | grep "hostname" -n
+
+# number of occurences
+cat gcutError_recon-all.log | grep "hostname" | wc -l
+
+# OR, 'mri_segstats done' OR 'user '
+cat gcutError_recon-all.log | grep  'mri_segstats done\|user '
+
+# the same but using extended regexp '-E'
+cat gcutError_recon-all.log | grep -E 'mri_segstats done|user '
+
+# EGREP does not need -E
+cat gcutError_recon-all.log | egrep  'mri_segstats done|user '
+
+# searching for NOT '/home' but containing 'home'
+cat gcutError_recon-all.log | grep  -v '/home' | grep ' home'
+
+# using wildcard '.*'
+cat gcutError_recon-all.log | grep   'home.*language' 
+
+# 
+cat gcutError_recon-all.log | grep -E 'before.*smoothing|after.*smoothing'
+
+# searching for '. ' pattern => dot and space
+cat gcutError_recon-all.log | grep  '\. '
+
+# matches 12.04 or 12.044. first dot is escaped and second acts as a wildcard
+cat gcutError_recon-all.log | grep  '12\.[0-1].4'
+
+
+
+
+
+
 
 
