@@ -224,23 +224,22 @@ awk '{sum+=$1}END{printf "%.2f", sum}' list.old
 
 # DATES
 # catches formats such as MM-DD-YY and MM/DD/YY
-cat date | grep '[0-1][0-9][/][0-3][0-9][-/][0-9][0-9]$'
+cat date | grep '[0-1][0-9][-/][0-3][0-9][-/][0-9][0-9]$'
+# first two characters are not digits '^' - INVERTED
+cat date | grep '[^0-1][^0-9][-/][0-3][0-9][-/][0-9][0-9]$'
 
+# excluding any vowels so only consonants (LPW etc..) will be shown
+[ˆaeiou]
 
+# squeeze the white spaces, filter one or no space at the beginning of the line
+cat gcutError_recon-all.log | tr -s ' ' |grep  '^ \/\|^\/'  |wc -l
 
+# any character
+cat gcutError_recon-all.log | tr -s ' ' |grep  '^ \/\|^\/'  |wc -l
 
+# lines containing multiple whitespaces
+grep '\([^ ]* \+\)\{3,\}' 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+# better solution to catch 2 or more consecutive spaces
+grep '[[:space:]]\{2,\}' test1
 
