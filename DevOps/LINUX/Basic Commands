@@ -185,6 +185,58 @@ cat gcutError_recon-all.log | grep  '\. '
 # matches 12.04 or 12.044. first dot is escaped and second acts as a wildcard
 cat gcutError_recon-all.log | grep  '12\.[0-1].4'
 
+# matches end-of-line '$' ending with ';'
+cat gcutError_recon-all.log | grep '\;$'
+
+# example
+ 0.000   0.000   1.000  -128.000;
+ 0.000  -1.000   0.000   128.000;
+ 0.000   0.000   0.000   1.000;
+
+cat gcutError_recon-all.log | grep '*[Ww].*'
+*************************WATERSHED**************************
+
+# showing lines with 'global' or with '*'
+cat gcutError_recon-all.log | grep  '*[Ww].*\|global'
+*************************WATERSHED**************************
+      global maximum in x=110, y=91, z=90, Imax=255
+
+
+
+# Transform matrix and 4 lines below/after, exclude line with 'Transform' or '--'', squeeze all white spaces 'tr'
+cat gcutError_recon-all.log | grep  'Transform matrix' -A 4 | grep -v 'Transform\|'--'' | tr -s ' '
+
+# with AWK, there is no need to do white space squeeze (tr -s)
+# it finds columsn automatically whether values are negative or positive
+ awk '{print $1,$2}' list.old
+1.26461 0.05558
+-0.06622 1.37430
+-0.11270 -0.18109
+0.00000 0.00000
+1.26461 0.05558
+
+# similar results with GREP and CUT but it does not show negative values
+cat gcutError_recon-all.log | grep  'Transform matrix' -A 4 | grep -v 'Transform\|'--'' > list.old
+
+ 
+# sumowanie wartosci z pierwszej kolumny
+awk '{sum+=$1}END{printf "%.2f", sum}' list.old  
+
+# DATES
+# catches formats such as MM-DD-YY and MM/DD/YY
+cat date | grep '[0-1][0-9][/][0-3][0-9][-/][0-9][0-9]$'
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
