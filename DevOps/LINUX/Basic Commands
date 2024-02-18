@@ -232,14 +232,65 @@ cat date | grep '[^0-1][^0-9][-/][0-3][0-9][-/][0-9][0-9]$'
 [ˆaeiou]
 
 # squeeze the white spaces, filter one or no space at the beginning of the line
-cat gcutError_recon-all.log | tr -s ' ' |grep  '^ \/\|^\/'  |wc -l
+cat 
+
+
+cat gcutError_recon-all.log | tr -s ' ' |grep  '^ \/\|^\/' | more 
 
 # any character
 cat gcutError_recon-all.log | tr -s ' ' |grep  '^ \/\|^\/'  |wc -l
+
+
+
+
 
 # lines containing multiple whitespaces
 grep '\([^ ]* \+\)\{3,\}' 
 
 # better solution to catch 2 or more consecutive spaces
+
+
 grep '[[:space:]]\{2,\}' test1
 
+# finding block of text starting and ending with a specific words
+awk '/Sorting.../, /Analyze.../' gcutError_recon-all.log
+Sorting...
+      first estimation of the COG coord: x=128 y=99 z=115 r=79
+      first estimation of the main basin volume: 2140715 voxels
+      Looking for seedpoints
+        2 found in the cerebellum
+        11 found in the rest of the brain
+      global maximum in x=110, y=91, z=90, Imax=255
+      CSF=17, WM_intensity=110, WM_VARIANCE=5
+      WM_MIN=110, WM_HALF_MIN=110, WM_HALF_MAX=110, WM_MAX=110
+      preflooding height equal to 10 percent
+done.
+Analyze...
+
+
+# counting how many blocks we found
+awk '/GLOBAL/, /OTHER/' gcutError_recon-all.log | grep 'GLOBAL' | wc -l
+
+awk '/GLOBAL/, /OTHER/' gcutError_recon-all.log | grep 'GLOBAL' | wc -line--extent | tail -F 
+
+
+# counting unique words 'home' occurence
+cat gcutError_recon-all.log | tr '[:space:]' '[\n*]' | grep -v "^\s*$" | grep home | uniq -c |  wc -l
+# tr '[:space:]' '[\n*]' - replacing space with a newline
+# grep -v "^\s*$" - excluding empty lines
+# uniq -c - counting occurences
+
+# counting unique occurence of all words
+cat gcutError_recon-all.log | tr '[:space:]' '[\n*]' | grep -v "^\s*$" | sort | uniq -c |sort -bnr
+
+# getting a sum of all values if column 1 if they are > 0
+cat list1 | LC_NUMERIC=C awk ' {if ($1>0) sum+=$1;} END{printf "%.4f\n", sum;}'
+
+# copying lines with the same keyword 'mgz' from two files into a new file
+# adding source file name to each row 'FILENAME' 
+awk '/mgz/{print "Source File,",FILENAME,",""Text found: ", $0}' list.scripts list.auto
+
+
+
+find . -type f -exec bash -c 'grep -q "file" <<(head -n 1 "$1" )' _ {} \; -printf '%p\n'
+find . -type f -exec bash -c 'grep -q "file" < <(head -n 1 "$1")' _ {} \; -printf '%p\n'
