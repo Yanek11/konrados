@@ -1,2 +1,66 @@
-# creating ssh keys and uploading them to the ssh server
+
+### creating ssh keys and uploading them to the ssh server
 https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server
+
+1. using ssh-copy-id
+
+ssh-keygen
+# Your identification has been saved in /home/kk/.ssh/id_rsa
+# Your public key has been saved in /home/kk/.ssh/id_rsa.pub
+ssh-copy-id -p 601 kk@192.168.69.128 
+# Number of key(s) added: 1
+DONE
+
+
+2. using ssh, "ssh-id-copy" not available
+
+ssh-keygen
+cat ~/.ssh/id_rsa.pub | ssh kk@192.168.69.128 -p 601 "cat >> ~/.ssh/authorized_keys"
+DONE
+
+3. using Windows OS
+- putty keygen
+generate public and private keys  (using PPK file version 2 => IMPORTANT)
+
+
+
+
+### WSL shit
+
+wsl --list --online
+
+### AWK ###
+
+# prints 1st column 
+awk '/structure name/ {print $1}' test.txt
+
+# contains '=' equal sign
+awk /=/'{print $0}' test2small.txt
+
+# filtering out empty lines
+
+# NF - number of fields, if not empty TRUE, then execute {print $0}
+awk 'NF{print $0}' test2small.txt
+# or
+awk '!/^$/' test2small.txt
+
+# only lines with ' = ' equals surrounded by whitespaces
+ awk /' = '/'{print $0}' test2small.txt | tail
+
+awk '{if(/100/)sub(/100/,111);print}' test2small.txt
+
+### NAT Hyper-V ###
+https://poweradm.com/configure-hyperv-nat/
+
+New-NetNat -Name SwitchNat -InternalIPInterfaceAddressPrefix 1.1.1.0/24
+
+
+
+Add-NetNatStaticMapping -NatName "vNAT_TestVM1_SSH" -Protocol TCP -ExternalIPAddress 0.0.0.0/24 -ExternalPort 22 -InternalIPAddress 192.168.51.20 -InternalPort 22
+
+# removing NetIpAddress
+Get-NetIPAddress |where InterfaceIndex -eq 26 | Remove-NetIPAddress
+
+# removeing previous NatNetwork
+
+get-NetNat | remove-NetNat

@@ -1,3 +1,22 @@
+### Connecting to Azure Portal via Powershell ###
+# https://azurelessons.com/connect-to-azure-powershell/
+
+Connect-AzAccount
+Get-AzAccount
+
+# creating AZAD group
+New-AzADGroup -DisplayName group1 -mailNickName "group1Nick"
+Get-AzADGroup # listing groups
+
+# creating AZAD user and adding to a group
+
+$pass = ConvertTo-SecureString -String "A241071z!" -AsPlainText -Force 
+New-AzADUser -DisplayName user1 -MailNickname user11 -UserPrincipalName user1@kk1kk.store -Password $pass   
+
+Add-AzADGroupMember -TargetGroupObjectId  3c7244ec-5115-4e3b-92a3-dd8a87a4023c 
+-MemberObjectId 71eb74f0-220d-42a8-80f9-8969b209a007
+
+
 ### DNS CONFIGURATION ###
 
 # changing VM DNS must be done from AZ Powershell not locally 

@@ -1,0 +1,26 @@
+Introduction Video
+SUBJECTS TO COVER:
+a) Introduce yourself (First Name Only), where are you from and where are you based?
+b) Briefly describe your work experience which will help you be great in a customer facing technical support role
+c) Why would you love working remotely with Support Adventure?
+
+
+You have 180 seconds to answer
+
+
+
+Technical question #1
+Describe what a DHCP server does in your own words, without telling us what the acronym means.
+You have 90 seconds to answer
+
+Think of a DHCP server like a librarian handing out books. Each book is like an IP address, a unique identifier for devices on a network.
+
+New Device Needs a Book: When a device (like your computer or phone) connects to the network, it needs an IP address to talk to other devices.
+Librarian Gives Out a Book: The DHCP server automatically picks a free IP address ("book") and gives it to the device. It also tells the device how long it can "borrow" the address.
+Devices Can Now Talk: With its unique IP address, the device can now send messages and find other devices on the network.
+
+
+Technical question #2
+What are the minimum hardware requirements for a client who needs web browsing, a VPN client, and some basic video editing on their workstation?
+You have 60 seconds to answer
+
