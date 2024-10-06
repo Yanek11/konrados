@@ -1,3 +1,5 @@
+# Pażdziernik 2024. Nauka do AZ 104
+
 ### Connecting to Azure Portal via Powershell ###
 # https://azurelessons.com/connect-to-azure-powershell/
 
@@ -15,6 +17,9 @@ New-AzADUser -DisplayName user1 -MailNickname user11 -UserPrincipalName user1@kk
 
 Add-AzADGroupMember -TargetGroupObjectId  3c7244ec-5115-4e3b-92a3-dd8a87a4023c 
 -MemberObjectId 71eb74f0-220d-42a8-80f9-8969b209a007
+
+# or adding multiple users using UPNs
+Add-AzADGroupMember -TargetGroupDisplayName group1 -MemberUserPrincipalName user3@kk1kk.store,user4@kk1kk.store
 
 
 ### DNS CONFIGURATION ###
