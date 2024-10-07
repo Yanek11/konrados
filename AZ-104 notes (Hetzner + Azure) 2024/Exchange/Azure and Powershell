@@ -1,12 +1,15 @@
 # Pażdziernik 2024. Nauka do AZ 104
 
-### Connecting to Azure Portal via Powershell ###
+#
+
+#region ### Connecting to Azure Portal via Powershell ###
 # https://azurelessons.com/connect-to-azure-powershell/
 
 Connect-AzAccount
 Get-AzAccount
+#endregion
 
-# creating AZAD group
+#region ###creating AZAD users / group
 New-AzADGroup -DisplayName group1 -mailNickName "group1Nick"
 Get-AzADGroup # listing groups
 
@@ -20,9 +23,9 @@ Add-AzADGroupMember -TargetGroupObjectId  3c7244ec-5115-4e3b-92a3-dd8a87a4023c
 
 # or adding multiple users using UPNs
 Add-AzADGroupMember -TargetGroupDisplayName group1 -MemberUserPrincipalName user3@kk1kk.store,user4@kk1kk.store
+#endregion
 
-
-### DNS CONFIGURATION ###
+#region ### DNS CONFIGURATION ###
 
 # changing VM DNS must be done from AZ Powershell not locally 
 # adding  DNS server via AZ Powershell
@@ -46,8 +49,9 @@ Set-DNSClientServerAddress "Ethernet" –ServerAddresses ("1.1.1.15", "168.63.12
 
 # resetting DNS addresses
 Set-DNSClientServerAddress -ResetServerAddresses
+#endregion
 
-### POWERSHELL REMOTE ###
+#region ### POWERSHELL REMOTE ###
 
 # Enabling Remote Powershell
 Enable-PSRemoting -Force
@@ -74,19 +78,23 @@ Enter-PSSession -ComputerName 3.3.3.16 -Credential kkadm # local admin
 Enter-PSSession -ComputerName 3.3.3.16 -Credential "ad-adm@ad.kakaka.store" # AD admin
 
 Enter-PSSession -ComputerName 1.1.1.16 -Credential "ad-adm@ad.kakaka.store" # AD admin
+#endregion
 
-### AD / DOMAIN ###
+#region ### AD / DOMAIN ###
 # renaming machine
 Rename-Computer -newname azExch-04
 # adding computer to a AD domain
 Add-Computer -DomainName kaka.local -Restart
+#endregion
 
-
-### FIREWALL ###
+ 
+#region ### FIREWALL ###
 ## enabling ICMP
 netsh advfirewall firewall add rule name="Allow ICMPv4" protocol="icmpv4:8,any" dir=in action=allow
+#endregion
 
-### Second Exchange installation via remote Powershell  (1vCPU/3.5GB RAM) ###
+
+#region ### Second Exchange installation via remote Powershell  (1vCPU/3.5GB RAM) ###
 
 # checking software version
 Get-WmiObject -Class Win32_Product | where-object name -like *Exchange* | select-object Name, Version
@@ -149,13 +157,16 @@ Get-powershellVirtualDirectory -Server $srv
 
 # checking Exchange services status where StartType Automatic
 get-service | where {$_.status -eq "Stopped" -and $_.Name -like "msex*" -and $_.StartType -like "Automatic*"}
+#endregion 
 
-# Exchange Management Shell - connecting remotely from another machine to Exchange 
+#region ### Exchange Management Shell - connecting remotely from another machine to Exchange 
 
 Set-ExecutionPolicy RemoteSigned
 $UserCredential = Get-Credential
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://exch01.ad.kakaka.store/powershell -Authentication Kerberos -Credential $UserCredential
 Import-PSSession $Session -DisableNameChecking -AllowClobber
+#endregion
+
 
 # Exchange Health check
 Get-ServerHealth -identity azexch03 |where-object {$_.alertvalue -eq "unHealthy"}
