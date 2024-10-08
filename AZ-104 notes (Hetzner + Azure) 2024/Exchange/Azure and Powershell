@@ -116,7 +116,7 @@ Resolve-DnsName autodiscover.kakaka.store
 Resolve-DnsName mail.kakaka.store
 
 
-# setting new Namespace URLs
+#region ### Setting new Namespace URLs
 # https://practical365.com/exchange-server-2016-client-access-namespace-configuration/
 
 $srv="azexch05","eset"
@@ -158,6 +158,8 @@ Get-powershellVirtualDirectory -Server $srv
 # checking Exchange services status where StartType Automatic
 get-service | where {$_.status -eq "Stopped" -and $_.Name -like "msex*" -and $_.StartType -like "Automatic*"}
 #endregion 
+
+#endregion
 
 #region ### Exchange Management Shell - connecting remotely from another machine to Exchange 
 

@@ -1,0 +1,47 @@
+Hetzner network
+
+VMNIC0
+IPFIre/WAN VM traffic
+IP:	138.201.19.152
+Gateway:	138.201.19.129
+Netmask:	255.255.255.192
+00:50:56:00:CA:E5 (virtual MAC)
+portgroup: WAN_01
+
+
+VMNIC1
+Management
+138.201.19.157	
+Gateway:	138.201.19.129
+Netmask:	255.255.255.192
+6c:b3:11:0f:62:36
+portgroup: N/A
+
+eth0 
+LAN (Green)
+00:0c:29:2f:d1:92
+1.1.1.254
+portgroup: _LAN
+
+eth1
+ORANGE (DMZ)
+00:0c:29:2f:d1:a6 
+6.6.6.254
+portgroup: _DMZ01
+
+eth2 
+WAN (RED/Public)
+00:50:56:00:CA:E5
+138.201.19.152
+portgroup: _WAN01
+
+
+
+
+
+Exchange 2016
+
+https://download.microsoft.com/download/2/5/8/258D30CF-CA4C-433A-A618-FB7E6BCC4EEE/ExchangeServer2016-x64-cu12.iso
+
+Exchange 2019
+https://www.microsoft.com/en-us/download/details.aspx?id=104131
