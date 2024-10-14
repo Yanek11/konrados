@@ -1,0 +1,22 @@
+# enabling remoting - CloudShell
+Enable-AzVMPSRemoting -Name 'azad_srv01' -ResourceGroupName 'rg_azad' -Protocol https -OsType Windows
+
+#1 connecting to Azure Powershell 
+Install-Module AzureRM
+# connecting if there is a MFA configured
+ connect-azAccount -TenantId "efb88f72-1a3c-4f14-b49a-cf37c6bfdc94"
+
+#2 checking if correct subscription selected
+Get-AzSubscription
+Get-AzContext
+
+# listing Azure VMs
+az vm list # CLI
+Get-AzVM # PS
+
+# starting VM via Cloud Shell Web or local PS
+get-azvm -name "azad-srv01" -Status | where PowerState -like "*dea*" | Start-vm
+
+#stopping 
+get-azvm -name "azad-srv01" -Status | where PowerState -like "*run*" |stop-azvm
+

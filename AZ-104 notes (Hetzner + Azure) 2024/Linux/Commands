@@ -1,0 +1,14 @@
+# Postfix bastard
+sudo nano /etc/postfix/main.cf
+sudo nano /etc/postfix/sasl/sasl_passwd
+sudo postmap /etc/postfix/sasl/sasl_passwd
+
+sudo postmap /etc/postfix/transport
+sudo postmap /etc/postfix/relay
+sudo systemctl restart postfix
+
+echo " test email" | mailx -r main@kk1kk.store -s hello 1jan1@proton.me
+
+sudo nano /etc/postfix/main.cf
+sudo postfix check
+
