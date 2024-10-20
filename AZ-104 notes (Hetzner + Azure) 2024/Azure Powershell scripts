@@ -1,10 +1,14 @@
 # enabling remoting - CloudShell
 Enable-AzVMPSRemoting -Name 'azad_srv01' -ResourceGroupName 'rg_azad' -Protocol https -OsType Windows
 
+# updating azure local module 
+Install-Module Az -AllowClobber -Force
+
 #1 connecting to Azure Powershell 
 Install-Module AzureRM
 # connecting if there is a MFA configured
- connect-azAccount -TenantId "efb88f72-1a3c-4f14-b49a-cf37c6bfdc94"
+### !!! DISABLE VPN 
+ connect-azAccount -Tenant "efb88f72-1a3c-4f14-b49a-cf37c6bfdc94"
 
 #2 checking if correct subscription selected
 Get-AzSubscription
@@ -32,23 +36,50 @@ New-AzresourceGroup -Name newrg -location northeurope
 get-azreosurce Get-AzResource -ResourceGroupName test_rg1 |Move-AzResource -DestinationResourceGroupName testrg1
 get-azreosurce  -ResourceGroupName testrg1 # checking
 
+# listing Vms and their private and public IP
+# https://mihai-albert.com/2020/10/01/get-the-list-of-all-azure-vms-with-all-their-private-and-public-ips/
+az vm list -d --query "[].{Name:name, PublicIPs:publicIps, PrivateIPs:privateIps}" -o table 
 
 ### VPN tunnel S2S ### Hetzner <> Azure ###
-
-##VNET##
+# creating IPSec virtual gateway
 
 # creating RG
-New-AzresourceGroup -name Test_RG1 -location northeurope
+New-AzResourceGroup -name TestRG3 -location northeurope
 
-# defining frontend and backend subnets
 $frontendSubnet=New-AzVirtualNetworkSubnetConfig -name frontendSubnet -AddressPrefix 10.1.1.0/24
-$backendSubnet=New-AzVirtualNetworkSubnetConfig -name backendSubnet -AddressPrefix 10.1.2.0/24
+$gatewaySubnet = New-AzVirtualNetworkSubnetConfig -Name gatewaysubnet -AddressPrefix "10.1.255.0/27"
+
 
 # vnet
-New-azvirtualnetwork -name VNet_test01 -ResourceGroupName Test_RG1 -verbose -AddressPrefix 10.1.0.0/16 -Subnet $backendSubnet,$frontendSubnet -Location northeurope
+New-AzVirtualNetwork -Name VNet3 -ResourceGroupName TestRG3 -Location 'northeurope' -AddressPrefix 10.1.0.0/16 -Subnet $gatewaySubnet,$frontendSubnet
 
-## gateway subnet
-add-AzVirtualNetworkSubnetConfig -Name gatewaySubnet -VirtualNetwork $vnet -AddressPrefix "10.1.255.0/27"
-# checking
-(get-azvirtualNetwork).subnets
+# gateway subnet
+$vnet = Get-AzVirtualNetwork -ResourceGroupName TestRG3 -Name VNet3
+# Add-AzVirtualNetworkSubnetConfig -Name 'GatewaySubnet' -AddressPrefix 10.1.255.0/27 -VirtualNetwork $vnet # error  gateway  subnet already exists
 
+Set-AzVirtualNetwork -VirtualNetwork $vnet
+
+# local network gateway
+
+New-AzLocalNetworkGateway -Name Site1 -ResourceGroupName TestRG3 `
+-Location 'northeurope' -GatewayIpAddress '138.201.19.152' -AddressPrefix '1.1.1.0/24'
+
+#
+#New-AzLocalNetworkGateway -Name Site1 -ResourceGroupName TestRG3 `
+#-Location 'East US' -GatewayIpAddress '138.201.19.152' -AddressPrefix @('1.1.1.0/24','6.6.6.0/24')
+
+# Public IP address
+
+$gwpip= New-AzPublicIpAddress -Name VNet1GWPIP -ResourceGroupName TestRG3 -Location 'northeurope' -AllocationMethod Static -Sku Standard
+
+# IP addressing configuration for gateway
+
+$vnet = Get-AzVirtualNetwork -Name VNet3 -ResourceGroupName TestRG3
+$subnet = Get-AzVirtualNetworkSubnetConfig -Name 'GatewaySubnet' -VirtualNetwork $vnet
+$gwipconfig = New-AzVirtualNetworkGatewayIpConfig -Name gwipconfig1 -SubnetId $subnet.Id -PublicIpAddressId $gwpip.Id
+
+# create VPN gateway
+
+New-AzVirtualNetworkGateway -Name VNet1GW -ResourceGroupName TestRG3 `
+-Location 'northeurope' -IpConfigurations $gwipconfig -GatewayType Vpn `
+-VpnType RouteBased -GatewaySku VpnGw1
