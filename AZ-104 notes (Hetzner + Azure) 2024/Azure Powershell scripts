@@ -45,7 +45,7 @@ az vm list -d --query "[].{Name:name, PublicIPs:publicIps, PrivateIPs:privateIps
 
 # creating RG
 New-AzResourceGroup -name TestRG3 -location northeurope
-
+# subnets
 $frontendSubnet=New-AzVirtualNetworkSubnetConfig -name frontendSubnet -AddressPrefix 10.1.1.0/24
 $gatewaySubnet = New-AzVirtualNetworkSubnetConfig -Name gatewaysubnet -AddressPrefix "10.1.255.0/27"
 
@@ -174,4 +174,79 @@ $pip = Get-AzPublicIpAddress -Name vm01IP -ResourceGroupName test01ResourceGroup
 $nic | Set-AzNetworkInterfaceIpConfig -Name myvm01 -PublicIPAddress $pip -Subnet $subnet
 $nic | Set-AzNetworkInterface
 
-    #endregion
+# disable intellisense prediction
+Set-PSReadlineOption -PredictionSource None
+# checking    
+Get-AzResource -ResourceGroupName test02ResourceGroup
+
+#endregion
+
+#region creating RG, VNET, subnets, IPs, IPconfigurations, privateDNSZone from scratch ###
+New-AzResourceGroup -name test01ResourceGroup -Location northeurope
+$rg=get-AzResourceGroup -name test01ResourceGroup -Location northeurope
+
+# VM01 - Virtual machine 
+
+New-AzPublicIpAddress -Name vm01publicipaddress -ResourceGroupName test01resourcegroup -Location northeurope -AllocationMethod static
+$publicip=Get-AzPublicIpAddress -Name vm01publicipaddress -ResourceGroupName $rg.ResourceGroupName
+
+New-AzVirtualNetwork -Name vnet01VirtualNetwork -ResourceGroupName test01Resourcegroup -location northeurope -AddressPrefix 10.0.0.0/16
+$vnet=Get-AzVirtualNetwork -name vnet01VirtualNetwork -ResourceGroupName test01Resourcegroup
+
+New-AzVirtualNetworkSubnetConfig -name backendSubnet -AddressPrefix 10.0.1.0/24
+add-AzVirtualNetworkSubnetConfig -name backendSubnet -VirtualNetwork $vnet -AddressPrefix 10.0.1.0/24
+$backendSubnet=get-AzVirtualNetworkSubnetConfig -name backendSubnet -VirtualNetwork $vnet
+
+New-AzVirtualNetworkSubnetConfig -name frontendSubnet -AddressPrefix 10.0.2.0/24
+add-AzVirtualNetworkSubnetConfig -name frontendSubnet -VirtualNetwork $vnet -AddressPrefix 10.0.2.0/24
+
+$frontendSubnet=get-AzVirtualNetworkSubnetConfig -name frontendSubnet -VirtualNetwork $vnet
+
+# DNS zones and links
+
+$zone=New-azPrivateDnsZone -Name private.kk1kk.store -ResourceGroupName test01Resourcegroup
+$link=New-AzPrivateDnsVirtualNetworkLink -ZoneName private.kk1kk.store -ResourceGroupName test01Resourcegroup -name "link01" -VirtualNetworkId $vnet.Id
+
+# checking
+get-azPrivateDnsZone
+get-AzPrivateDnsVirtualNetworkLink -ZoneName private.kk1kk.store 
+
+#creating 2x test VMs
+# very insecure !!!!!!!
+$password = ConvertTo-SecureString "A241071z123!" -AsPlainText -Force
+$cred= New-Object System.Management.Automation.PSCredential ("kk", $password )
+
+New-AzVm `
+    -ResourceGroupName "test01Resourcegroup" `
+    -Name "myVM01" `
+    -Location "north europe" `
+    -subnetname backendSubnet `
+    -VirtualNetworkName "vnet01VirtualNetwork" `
+    -addressprefix 10.0.1.0/24 `
+    -Credential $cred `
+    -OpenPorts 3389
+
+New-AzVm `
+    -ResourceGroupName "test01Resourcegroup" `
+    -Name "myVM02" `
+    -Location "north europe" `
+    -subnetname backendSubnet `
+    -VirtualNetworkName "vnet01VirtualNetwork" `
+    -addressprefix 10.0.1.0/24 `
+    -Credential $cred `
+    -OpenPorts 3389
+
+#creating private DNS sets
+    New-AzPrivateDnsRecordSet -Name myvm01 -RecordType A -ZoneName private.kk1kk.store -ResourceGroupName test01ResourceGroup -Ttl 3600 -PrivateDnsRecords (New-AzPrivateDnsRecordConfig -IPv4Address "10.0.1.11")
+    
+    New-AzPrivateDnsRecordSet -Name myvm02 -RecordType A -ZoneName private.kk1kk.store -ResourceGroupName test01ResourceGroup -Ttl 3600 -PrivateDnsRecords (New-AzPrivateDnsRecordConfig -IPv4Address "10.0.1.12")
+
+    #viewing DNS records
+    get-AzPrivateDnsRecordSet -ResourceGroupName test01resourcegroup -ZoneName private.kk1kk.store
+
+
+
+
+#endregion
+# disable intellisense prediction
+Set-PSReadlineOption -PredictionSource None
