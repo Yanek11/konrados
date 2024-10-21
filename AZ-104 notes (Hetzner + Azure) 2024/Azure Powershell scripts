@@ -40,7 +40,7 @@ get-azreosurce  -ResourceGroupName testrg1 # checking
 # https://mihai-albert.com/2020/10/01/get-the-list-of-all-azure-vms-with-all-their-private-and-public-ips/
 az vm list -d --query "[].{Name:name, PublicIPs:publicIps, PrivateIPs:privateIps}" -o table 
 
-### VPN tunnel S2S ### Hetzner <> Azure ###
+#region ## VPN tunnel S2S ### Hetzner <> Azure ###
 # creating IPSec virtual gateway
 
 # creating RG
@@ -55,12 +55,11 @@ New-AzVirtualNetwork -Name VNet3 -ResourceGroupName TestRG3 -Location 'northeuro
 
 # gateway subnet
 $vnet = Get-AzVirtualNetwork -ResourceGroupName TestRG3 -Name VNet3
-# Add-AzVirtualNetworkSubnetConfig -Name 'GatewaySubnet' -AddressPrefix 10.1.255.0/27 -VirtualNetwork $vnet # error  gateway  subnet already exists
 
+# saving changes
 Set-AzVirtualNetwork -VirtualNetwork $vnet
 
 # local network gateway
-
 New-AzLocalNetworkGateway -Name Site1 -ResourceGroupName TestRG3 `
 -Location 'northeurope' -GatewayIpAddress '138.201.19.152' -AddressPrefix '1.1.1.0/24'
 
@@ -69,17 +68,110 @@ New-AzLocalNetworkGateway -Name Site1 -ResourceGroupName TestRG3 `
 #-Location 'East US' -GatewayIpAddress '138.201.19.152' -AddressPrefix @('1.1.1.0/24','6.6.6.0/24')
 
 # Public IP address
-
 $gwpip= New-AzPublicIpAddress -Name VNet1GWPIP -ResourceGroupName TestRG3 -Location 'northeurope' -AllocationMethod Static -Sku Standard
 
 # IP addressing configuration for gateway
-
 $vnet = Get-AzVirtualNetwork -Name VNet3 -ResourceGroupName TestRG3
 $subnet = Get-AzVirtualNetworkSubnetConfig -Name 'GatewaySubnet' -VirtualNetwork $vnet
 $gwipconfig = New-AzVirtualNetworkGatewayIpConfig -Name gwipconfig1 -SubnetId $subnet.Id -PublicIpAddressId $gwpip.Id
 
 # create VPN gateway
-
 New-AzVirtualNetworkGateway -Name VNet1GW -ResourceGroupName TestRG3 `
 -Location 'northeurope' -IpConfigurations $gwipconfig -GatewayType Vpn `
 -VpnType RouteBased -GatewaySku VpnGw1
+#endregion
+
+#region # creating/managing a PRIVATE DNS zone in Azure
+
+# https://www.linkedin.com/pulse/how-connect-azure-site-on-prem-using-gateway-ipfire-ka%C5%82uszy%C5%84ski-czpcf/?trackingId=2k7H0C%2FmpyyyYA0aqzxweg%3D%3D
+
+#region original script template 
+# https://learn.microsoft.com/en-us/azure/dns/private-dns-getstarted-powershell
+#endregion
+
+# creating 
+install-Module -name az.privatedns
+$zone=New-AzPrivateDnsZone -Name private.kk1kk.store -ResourceGroupName rg_azad
+PS C:\Users\kk> get-azprivatednszone
+$vnet=get-azvirtualnetwork -Name vnet_azad
+$link=New-AzPrivateDnsVirtualNetworkLink -ZoneName private.kk1kk.store -ResourceGroupName rg_azad -name "my_link" -VirtualNetworkId $vnet.Id
+# creating
+
+# listing records
+Get-AzPrivateDnsRecordSet -ResourceGroupName rg_azad -ZoneName private.kk1kk.store
+
+# DNS records
+New-AzPrivateDnsRecordSet -name dc01 -RecordType A -ZoneName private.kk1kk.store -ResourceGroupName rg_azad -Ttl 3600 -PrivateDnsRecord (New-AzPrivateDnsRecordConfig -Ipv4Address "10.0.1.11")
+
+# testing
+#create VMs for testing
+
+
+# privateDNS Virtual Network Link
+get-AzPrivateDnsVirtualNetworkLink  -ResourceGroupName rg_azad -ZoneName private.kk1kk.store
+get-AzPrivateDnsVirtualNetworkLink  -ResourceGroupName rg_azad -ZoneName private.kk1kk.store |remove-azprivatednsvirtualnetworklink
+
+# remove AzPrivateDnsZone
+Remove-AzPrivateDnsZone -name private.kk1kk.store -ResourceGroupName rg_azad
+
+#endregion
+
+#region ### creating PRIVATE DNS ZONE from the scratch and testing 
+
+New-azresourceGroup -name rg_test01 -location northeurope
+$backendSubnet=New-AzVirtualNetworkSubnetConfig -name backendSubnet -AddressPrefix 10.1.2.0/24
+$vnet=New-AzVirtualNetwork -ResourceGroupName test01ResourceGroup -Name test01VNet -Location 'north europe' -AddressPrefix "10.1.0.0/16" -Subnet $backendSubnet
+
+$zone=New-azPrivateDnsZone -Name private.kk1kk.store -ResourceGroupName test01Resourcegroup
+$link=New-AzPrivateDnsVirtualNetworkLink -ZoneName private.kk1kk.store -ResourceGroupName test01Resourcegroup -name "link01" -VirtualNetworkId $vnet.Id
+
+# checking
+get-azPrivateDnsZone
+get-AzPrivateDnsVirtualNetworkLink -ZoneName private.kk1kk.store 
+
+#creating 2x test VMs
+# very insecure !!!!!!!
+$password = ConvertTo-SecureString "A241071z123!" -AsPlainText -Force
+$cred= New-Object System.Management.Automation.PSCredential ("kk", $password )
+
+New-AzVm `
+    -ResourceGroupName "test01Resourcegroup" `
+    -Name "myVM01" `
+    -Location "north europe" `
+    -subnetname backendSubnet `
+    -VirtualNetworkName "test01vnet" `
+    -addressprefix 10.1.2.0/24 `
+    -Credential $cred `
+    -OpenPorts 3389
+
+New-AzVm `
+    -ResourceGroupName "test01Resourcegroup" `
+    -Name "myVM02" `
+    -Location "north europe" `
+    -subnetname backendSubnet `
+    -VirtualNetworkName "test01vnet" `
+    -addressprefix 10.1.2.0/24 `
+    -Credential $cred `
+    -OpenPorts 3389
+
+#creating private DNS sets
+    New-AzPrivateDnsRecordSet -Name myvm01 -RecordType A -ZoneName private.kk1kk.store -ResourceGroupName test01ResourceGroup -Ttl 3600 -PrivateDnsRecords (New-AzPrivateDnsRecordConfig -IPv4Address "10.1.2.4")
+    
+    New-AzPrivateDnsRecordSet -Name myvm02 -RecordType A -ZoneName private.kk1kk.store -ResourceGroupName test01ResourceGroup -Ttl 3600 -PrivateDnsRecords (New-AzPrivateDnsRecordConfig -IPv4Address "10.1.2.5")
+
+    #viewing DNS records
+    get-AzPrivateDnsRecordSet -ResourceGroupName test01resourcegroup -ZoneName private.kk1kk.store
+
+    #endregion
+
+    #region CREATING and ASSIGNING PUBLIC IP
+New-AzPublicIpAddress -Name vm01IP -ResourceGroupName test01resourcegroup -location northeurope -AllocationMethod Static
+
+$vnet = Get-AzVirtualNetwork -Name test01VNet -ResourceGroupName test01ResourceGroup
+$subnet = Get-AzVirtualNetworkSubnetConfig -Name backendsubnet -VirtualNetwork $vnet
+$nic = Get-AzNetworkInterface -Name myVM01 -ResourceGroupName test01ResourceGroup
+$pip = Get-AzPublicIpAddress -Name vm01IP -ResourceGroupName test01ResourceGroup
+$nic | Set-AzNetworkInterfaceIpConfig -Name myvm01 -PublicIPAddress $pip -Subnet $subnet
+$nic | Set-AzNetworkInterface
+
+    #endregion
