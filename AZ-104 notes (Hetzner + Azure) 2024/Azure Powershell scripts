@@ -185,7 +185,7 @@ Get-AzResource -ResourceGroupName test02ResourceGroup
 New-AzResourceGroup -name test01ResourceGroup -Location northeurope
 $rg=get-AzResourceGroup -name test01ResourceGroup -Location northeurope
 
-# VM01 - Virtual machine 
+# Preparing networking 
 
 New-AzPublicIpAddress -Name vm01publicipaddress -ResourceGroupName test01resourcegroup -Location northeurope -AllocationMethod static
 $publicip=Get-AzPublicIpAddress -Name vm01publicipaddress -ResourceGroupName $rg.ResourceGroupName
@@ -216,15 +216,32 @@ get-AzPrivateDnsVirtualNetworkLink -ZoneName private.kk1kk.store
 $password = ConvertTo-SecureString "A241071z123!" -AsPlainText -Force
 $cred= New-Object System.Management.Automation.PSCredential ("kk", $password )
 
+# finding the right image
+https://ilovepowershell.com/azure/every-step-you-need-to-create-an-azure-virtual-machine-with-powershell/
+# commands need to nbe executed in sequence to find the right image
+#  Get-AzVMSize -Location northeurope 
+# "Standard_B2s"
+#Get-AzVMImagePublisher
+# Get-AzVMImageOffer
+# Get-AzVMImageSku
+# Get-AzVMImage -Location northeurope -PublisherName MicrosoftWindowsServer -offer WindowsServer -Skus "2016-datacenter" -Version "14393.7428.241004"
+
+
+ $VirtualMachine = New-AzVMConfig -VMName "vm01" -VMSize "Standard_B2s" 
+    Set-AzVMSourceImage -VM $VirtualMachine -PublisherName "MicrosoftWindowsServer" -Offer "WindowsServer" -Skus "2016-Datacenter" -Version "latest"
+
+
 New-AzVm `
     -ResourceGroupName "test01Resourcegroup" `
-    -Name "myVM01" `
+    -Name $VirtualMachine `
     -Location "north europe" `
     -subnetname backendSubnet `
     -VirtualNetworkName "vnet01VirtualNetwork" `
     -addressprefix 10.0.1.0/24 `
     -Credential $cred `
-    -OpenPorts 3389
+    -OpenPorts 3389 `
+    -Image $VirtualMachine
+    
 
 New-AzVm `
     -ResourceGroupName "test01Resourcegroup" `
