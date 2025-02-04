@@ -75,8 +75,9 @@ $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName 'Micros
 New-AzVM -ResourceGroupName $ResourceGroupName -Location $LocationName -VM $VirtualMachine -Verbose
 
 ### Windows 2022, with a public IP
+#https://learn.microsoft.com/en-us/azure/virtual-network/ip-services/virtual-network-deploy-static-pip-arm-ps
 # creating new RG,VNET,VNIC,VM
-New-AzResourceGroup -Name "ResourceGroup03" -location "northeurope"
+New-AzResourceGroup -Name "ResourceGroup03" -location "northeurope" -Force
 $VMLocalAdminUser = "kk-admin"
 $VMLocalAdminSecurePassword = ConvertTo-SecureString -String "A241071z123!" -AsPlainText -Force
 $LocationName = "north europe"
@@ -85,16 +86,26 @@ $ComputerName = "azSRV01"
 $VMName = "MyVM01"
 $VMSize = "Standard_B2s"
 
-$NetworkName = "MyNet1"
-$NICName = "MyNIC"
-$SubnetName = "MySubnet"
+$NetworkName = "VNET01"
+$NICName = "$VMName.NIC"
+$SubnetName = "Subnet01"
 $SubnetAddressPrefix = "10.0.0.0/24"
 $VnetAddressPrefix = "10.0.0.0/16"
 $sku="2022-datacenter-azure-edition-core"
+$ip = @{
+    Name = 'myPublicIP'
+    ResourceGroupName = $ResourceGroupName
+    Location = $LocationName
+    Sku = "Standard"
+    AllocationMethod = 'Static'
+    IpAddressVersion = 'IPv4'
+       
+}
+New-AzPublicIpAddress @ip
 
 $SingleSubnet = New-AzVirtualNetworkSubnetConfig -Name $SubnetName -AddressPrefix $SubnetAddressPrefix
 $Vnet = New-AzVirtualNetwork -Name $NetworkName -ResourceGroupName $ResourceGroupName -Location $LocationName -AddressPrefix $VnetAddressPrefix -Subnet $SingleSubnet
-$NIC = New-AzNetworkInterface -Name $NICName -ResourceGroupName $ResourceGroupName -Location $LocationName -SubnetId $Vnet.Subnets[0].Id
+$NIC = New-AzNetworkInterface -Name $NICName -ResourceGroupName $ResourceGroupName -Location $LocationName -SubnetId $Vnet.Subnets[0].Id 
 
 $Credential = New-Object System.Management.Automation.PSCredential ($VMLocalAdminUser, $VMLocalAdminSecurePassword);
 
@@ -103,7 +114,7 @@ $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -Computer
 $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
 $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName 'MicrosoftWindowsServer' -Offer 'WindowsServer' -Skus $sku -Version latest
 
-New-AzVM -ResourceGroupName $ResourceGroupName -Location $LocationName -VM $VirtualMachine -Verbose
+New-AzVM -ResourceGroupName $ResourceGroupName -Location $LocationName -VM $VirtualMachine -PublicIpAddressName 'myPublicIP' -Verbose -force
 
 
 
